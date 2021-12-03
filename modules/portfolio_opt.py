@@ -28,7 +28,7 @@ class PortfolioOptmizer:
     
 
 
-    def _weightsOptimizer(self,df,annualized_min_return=None,annualized_max_volatility=None):
+    def _weightsOptimizer(self,df,obj='Sharpe',annualized_min_return=None,annualized_max_volatility=None):
         df = df.pct_change().dropna()
 
 
@@ -42,7 +42,6 @@ class PortfolioOptmizer:
 
         model='Classic'
         rm = 'MV' 
-        obj = 'Sharpe'
         hist = True 
         rf = 0
         l = 0
@@ -53,6 +52,7 @@ class PortfolioOptmizer:
 
 
         risk = rk.Sharpe_Risk(w,port.cov,port.returns,rm=rm,rf=rf,alpha=0.05)*t_factor**0.5
+
         return {x:y for x,y in zip(df.columns,np.array(w.T)[0])},port,risk
 
 
@@ -66,7 +66,6 @@ class PortfolioOptmizer:
         w = pd.DataFrame.from_dict({x:[y] for x,y in w.items()},orient='index',columns=['weights'])
         model='Classic'
         rm = 'MV' 
-        obj = 'Sharpe'
         hist = True 
         rf = 0
         
@@ -80,7 +79,7 @@ class PortfolioOptmizer:
         ax = plf.plot_frontier(w_frontier=frontier, mu=mu, cov=cov, returns=returns, rm=rm, rf=rf, alpha=0.05, cmap='viridis', w=w, label=label, marker='*', s=16, c='r', height=6, width=10, ax=None)
         plt.show()
 
-    def getWeights(self,tickList=None,filename=None,lookBack='6mo',annualized_min_return=None,annualized_max_volatility=None):
+    def getWeights(self,tickList=None,filename=None,lookBack='6mo',obj='Sharpe',annualized_min_return=None,annualized_max_volatility=None):
         
         if lookBack not in ['1d','5d','1mo','3mo','6mo','1y','2y','5y','10y','ytd','max']:
             raise Exception("lookBack must be one of the following\n'1d','5d','1mo','3mo','6mo','1y','2y','5y','10y','ytd','max'")
@@ -100,15 +99,18 @@ class PortfolioOptmizer:
         
 
         if annualized_min_return!=None and annualized_max_volatility==None:
-            weights,port,risk = self._weightsOptimizer(df,annualized_min_return=annualized_min_return)
+            weights,port,risk = self._weightsOptimizer(df,obj=obj,annualized_min_return=annualized_min_return)
 
         elif annualized_max_volatility!=None and annualized_min_return==None:
-            weights,port,risk = self._weightsOptimizer(df,annualized_max_volatility=annualized_max_volatility)
+            weights,port,risk = self._weightsOptimizer(df,obj=obj,annualized_max_volatility=annualized_max_volatility)
 
         else:
             raise Exception("Either annualized_min_return or annualized_max_volatility must be provided...")
 
-        return weights
+        self.frontierPlot(port,weights)
+        # self.piePlot(weights)
+
+        return weights,risk
 
 
 if __name__=="__main__":
@@ -117,4 +119,4 @@ if __name__=="__main__":
                         # tickList=['JCI', 'TGT', 'CMCSA', 'CPB', 'MO', 'APA', 'MMC', 'JPM',
                         # 'ZION', 'PSA', 'BAX', 'BMY', 'LUV', 'PCAR', 'TXT', 'TMO',
                         # 'DE', 'MSFT', 'HPQ', 'SEE', 'VZ', 'CNP', 'NI', 'T', 'BA'],
-                        filename='test.csv',annualized_max_volatility=0.11))
+                        filename='test.csv',obj='MaxRet',annualized_max_volatility=0.17))
