@@ -17,7 +17,7 @@ import re
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('index'))  
+    return HttpResponseRedirect(reverse('reg_sign_in_out:user_login'))  
 
 @csrf_protect
 def registration(request):

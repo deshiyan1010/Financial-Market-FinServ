@@ -55,21 +55,25 @@ class Startup():
     
     def __init__(self) -> None:
         try:
-            self.lastUpdated = (pModels.AssetPriceMovements.objects.latest('date')).date.strftime('%Y-%m-%d')
-        except:
-            self.lastUpdated = '2021-12-01'
+            self.lastUpdated = (pModels.AssetPriceMovements.objects.latest('date').date+ timedelta(days=1)).strftime('%Y-%m-%d')  
+            
+        except Exception as e:
+            print(e)
+            self.lastUpdated = '2021-11-15'
 
-        today = datetime.now().strftime("%Y-%m-%d")
-        print(self.lastUpdated)
-        if self.lastUpdated!=today:
+        self.today = datetime.now().strftime("%Y-%m-%d")
+        print(self.lastUpdated,self.today)
+        if self.lastUpdated!=self.today:
             self.syncData()
 
     def syncData(self):
 
         try:
-            data = yf.download(" ".join(list(ALL_ASSETS.values())), start=self.lastUpdated)['Adj Close'].dropna().reset_index()
+            data = yf.download(" ".join(list(ALL_ASSETS.values())), start=self.lastUpdated,end=self.today)['Adj Close']
+            print(data)
+            data = data.dropna().reset_index()
             for asset in data.columns[1:]:
-                tick_obj,created = pModels.AssetsDetails.objects.get_or_create(assetName=ALL_ASSETS_REV[asset],assetTicker=asset)
+                tick_obj,created = pModels.Assets.objects.get_or_create(assetName=ALL_ASSETS_REV[asset],assetTicker=asset)
                 if created:
                     tick_obj.save()
 
@@ -79,5 +83,6 @@ class Startup():
                     p = pModels.AssetPriceMovements.objects.create(ticker=tick_obj,date=date,adj_close=row[asset])
                     p.save()
 
-        except:
+        except Exception as e:
+            print(e)
             pass

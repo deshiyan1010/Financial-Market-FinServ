@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
     'crispy_forms',
     'dashboard',
     'reg_sign_in_out',
@@ -165,5 +165,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# from finserv.startup import Startup
-# Startup()
+from finserv.startup import Startup
+Startup()
+
+# from finserv.setTIme import _linux_set_time
+
+# time_tuple = ( 2021, # Year
+#                   11, # Month
+#                   20, # Day
+#                   0, # Hour
+#                  38, # Minute
+#                   0, # Second
+#                   0, # Millisecond
+#               )
+
+# _linux_set_time(time_tuple)

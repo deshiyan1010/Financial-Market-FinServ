@@ -1,28 +1,51 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from modules.helper import getNews,getTickerData,getNetWorthGainUnrealized,getPortList
+from modules.helper import getNews,getTickerData,getPortList,getIndPortLineChart,overallStats,getOverallPie
+    
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
 
+from pprint import pprint
 
-
-@login_required
 def dash(request):
 
-    
-    sorted_news = getNews()
+    if request.user.is_authenticated==False:
+        return HttpResponseRedirect(reverse('reg_sign_in_out:user_login'))  
+
+
+    #List of news [(title,link,published)]
+    sorted_news = getNews()[:10]
+
+    #{asset:price}
     topAssets = getTickerData()
-    total_asset_dict,gains_dict = getNetWorthGainUnrealized(request.user)
-    print(
-        {x.asset.assetName:y for x,y in total_asset_dict.items()},
-        {x.asset.assetName:y for x,y in gains_dict.items()}
-        )
+
+    #{port:{asset:{'quantity_quote':x,'quantity_usd':x}}}
+    #{port:{asset:{'perGain':x,'profit':x,'currentAssetWorth':x}}
+    #totalprofit
+    #portWorth
 
     ports = getPortList(request.user)
 
-    return render(request, 'dashboard/dash.html',context=
+
+
+    indPortLine,cleaned,datearr = getIndPortLineChart(request.user)
+
+    pie_dict = getOverallPie(request.user)
+    
+    overall = overallStats(request.user)
+    
+
+
+    return render(request, 'dashboard/dashnew.html',context=
                     {
                         'topAssets':topAssets,
-                        'assetPerfom':[0, 48, 0, 19, 86, 27, 90],
                         'news':sorted_news,
-                        'ports':ports
+                        'ports':ports,
+                        'overall':overall,
+                        'indPortLine':cleaned,
+                        'dateArr':datearr,
+                        'pie':pie_dict,
                         }
                 )
+
+
