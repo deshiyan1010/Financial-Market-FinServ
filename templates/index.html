@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head_block %}
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="/static/profilepage/profile.css">
+<style>
+        #color{
+                color: darkgrey;
+                font-size: 1.7rem;
+        }
+        #row-broder{
+                padding-top: 5px;
+                padding-bottom: 5px;
+                border: ghostwhite;
+                border-style: solid;
+                border-width: 5px;
+                text-align: center;
+        }
+
+ 
+
+
+</style>
+
+
+
+{% endblock head_block %}
+
+{% block body_block %}
+
+<div >
+        <p style='float:right; margin:0px 15px 0px 0px;color: rgba(49, 48, 48, 0.671);font-size: 2rem;'><strong>10/10</strong></p>
+        <div class='jumbotron'>
+        <h1 class="text-center cover-heading" style="font-size: 5em;">Mission Vidya</h1>
+        <p class='text-center'>Making online classes accessable to all.</p>
+        </div>
+      <div class='container' id='color'>
+        
+        <div class='container'>
+                <section class="col-xl-6 col-lg-4 col-sm-12 col-md-6" style='margin-bottom:10px' id='row-broder'><p>Hello and welcome to a non-profit oriented website where you can donate your old unused phone and help the poor whose childern are not able to access online classes. We connect the donor and reciever as securely as possible by not displaying your phone number or any of your personal details except your subdistrict and your first name. This is a only platform of its kind and I welcome you on board.</p></section>
+                <img src="/static/news_articles/2.png" class="col-xl-6 offset-lg-1 col-lg-6 col-sm-12 col-md-6 img-fluid" alt="img">
+        </div><br><br>
+        <div class='container'>
+                <section class="col-lg-4 col-sm-12 col-md-6" style='margin-bottom:10px' id='row-broder'><p>See these news articles. The current pandemic is hurting everyone, from professionals to farmers. Under previleged people are selling their belongings so that their childerns can attend online classes.</p></section>
+                <img src="/static/news_articles/1.png" class="offset-lg-1 col-lg-6 col-sm-12 col-md-6 img-fluid" alt="img">
+        </div><br><br>
+        <div class='container'>
+                <section class="col-lg-4 col-sm-12 col-md-6" style='margin-bottom:10px' id='row-broder'><p>Only you can break this trend and help the under previleged childerns to get connected with thier schools. Just by donating your unused old phones to educate someone.</p></section>
+                <img src="/static/news_articles/3.png" class="offset-lg-1 col-lg-6 col-sm-12 col-md-6 img-fluid" alt="img">
+        </div><br><br>
+        <div class='container'>
+                <section class="col-lg-4 col-sm-12 col-md-6" style='margin-bottom:10px' id='row-broder'><p>We connect the donors and applicants so that where will not be any middle man. All the details of the donor are maintained securely and is not displayed except for the first name and subdistrict. Donors privacy is our top most priority here.</p></section>
+                <img src="/static/news_articles/4.png" class="offset-lg-1 col-lg-6 col-sm-12 col-md-6 img-fluid" alt="img">
+        </div><br><br>
+        <div class='container'>
+                <section class="col-lg-4 col-sm-12 col-md-6" style='margin-bottom:10px' id='row-broder'><p>The article next to this is just on example where the unprevileged are going as far as sucide just because they couldn't afford smartphones. Please help us in breaking this chain by donation and spreading the presence of this website.</p></section>
+                <img src="/static/news_articles/5.png" class="offset-lg-1 col-lg-6 col-sm-12 col-md-6 img-fluid" alt="img">
+        </div><br><br>
+        <div class='container'>
+                <p id='row-broder' align='center'>Tutioral to apply and donate.</p>
+                <iframe class="col-lg-5 col-sm-12 col-md-12" id='row-border' style='margin-top:25px' width="560" height="315" src="https://www.youtube.com/embed/_6hmUoX-cmA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe class="offset-lg-1 col-lg-5 col-sm-12 col-md-12" id='row-border' style='margin-top:25px' width="560" height="315" src="https://www.youtube.com/embed/X93eZ06OiTw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </iframe>
+        </div><br><br>       
+        </div>   
+
+    
+<!-- Footer -->
+      <!-- Footer -->
+    </div>
+    </body>
+
+{% endblock %}

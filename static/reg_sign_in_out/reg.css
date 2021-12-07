@@ -1,0 +1,72 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    /*font-size: 16px;*/
+    line-height: 1.7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    box-sizing: border-box; 
+    color: #fff;
+    height: 100vh;
+    /* background-image: linear-gradient(to right bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(../mainimg.jpg);
+    background-size: cover;
+    background-position: top; */
+    background-color: #404040;
+    background-image: none; !important
+}
+
+
+
+
+.input {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    border: none;
+    float: right;
+    width: 50%;
+}
+
+
+#form {
+    font-size: 20px;
+    max-width: 40%;
+    margin: 0 auto;
+   
+}
+
+
+#fill {
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    font-size: 6rem;
+    text-align: center;
+}
+
+label {
+  
+    margin-bottom: 3rem;
+}
+
+.bg {
+   text-align: center;
+}
+
+#sub {
+    padding: .5rem .25rem;
+    color: white;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+}
+
+#id_profile_pic {
+    width: 50%;
+}

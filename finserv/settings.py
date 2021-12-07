@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'crispy_forms',
     'dashboard',
+    'reg_sign_in_out',
+
 ]
 
 MIDDLEWARE = [
@@ -138,6 +141,17 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
+
+LOGIN_URL = '/reg_sign_in_out/user_login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL = 587
+EMAIL_HOST_USER = 'hotfiltercoffee@gmail.com'
+EMAIL_HOST_PASSWORD = 'realVinayak@201100'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 

@@ -1,0 +1,109 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head_block %}
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="/static/index.css">
+
+{% endblock head_block %}
+
+{% block body_block %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+ <body>
+  <br /><br />
+  
+  <style>
+    #color{
+      color: darkgrey; !important
+    }
+  </style>
+
+
+  <form method="post" id="applyForm" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="container" style="max-width:600px;">
+   <h2 align="center" id='color'>Application Form</h2><br /><br />
+   <!-- <table id='color' class='col-lg-4'>
+    {{user_form|crispy}}<br>
+    {{profile_form|crispy}}
+  </table> -->
+
+  <div id='color'>
+    {% csrf_token %}
+    {{ user_form|crispy}}
+    {{ profile_form|crispy }}
+  
+   <button class='text-center btn btn-light' type="submit">Submit</button><br><br><br><br>
+  </div>
+</div>
+</form>Error:
+ <h1>{{errorone}} <br> {{errortwo}}</h1>
+ </body>
+</html>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>
+$(document).ready(function(){
+
+ load_json_data('state');
+
+ function load_json_data(id, parent_id)
+ {
+  var html_code = '';
+  $.getJSON("/static/data.json", function(data){
+
+   html_code += '<option value="">Select '+id+'</option>';
+   $.each(data, function(key, value){
+    if(id == 'state')
+    {
+     if(value.parent_id == '0')
+     {
+      html_code += '<option value="'+value.id+'">'+value.name+'</option>';
+     }
+    }
+    else
+    {
+     if(value.parent_id == parent_id)
+     {
+      html_code += '<option value="'+value.id+'">'+value.name+'</option>';
+     }
+    }
+   });
+   $('#'+id).html(html_code);
+  });
+
+ }
+
+ $(document).on('change', '#state', function(){
+  var state_id = $(this).val();
+  if(state_id != '')
+  {
+   load_json_data('district', state_id);
+  }
+  else
+  {
+   $('#district').html('<option value="">Select district</option>');
+   $('#subdistrict').html('<option value="">Select subdistrict</option>');
+  }
+ });
+ $(document).on('change', '#district', function(){
+  var district_id = $(this).val();
+  if(district_id != '')
+  {
+   load_json_data('subdistrict', district_id);
+  }
+  else
+  {
+   $('#subdistrict').html('<option value="">Select subdistrict</option>');
+  }
+ });
+});
+</script>
+{% endblock %}

@@ -4,7 +4,7 @@ from finserv import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-app_name = "apply_main"
+app_name = "dashboard"
 
 urlpatterns = [
                 path('',views.dash,name='dash'),
