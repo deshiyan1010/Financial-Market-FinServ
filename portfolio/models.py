@@ -22,7 +22,7 @@ class Assets(models.Model):
 
 class AssetsDetails(models.Model):
     assetName = models.CharField(max_length=64,primary_key=True)
-    assetTicker = models.CharField(max = 8)
+    assetTicker = models.CharField(max_length=8)
 
 class AssetPriceMovements(models.Model):
     ticker = models.ForeignKey(AssetsDetails,on_delete=models.CASCADE)

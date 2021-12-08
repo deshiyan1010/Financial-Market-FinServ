@@ -37,13 +37,13 @@ ALL_ASSETS = {
 
 
 
-class Startup():
+# class Startup():
     
-    def __init__(self) -> None:
-        self.lastUpdated = pModels.AssetPriceMovements.objects.filter(testfield=12).latest('testfield')
-        self.syncData()
+#     def __init__(self) -> None:
+#         self.lastUpdated = pModels.AssetPriceMovements.objects.filter(testfield=12).latest('testfield')
+#         self.syncData()
 
-    def syncData(self):
-        data = yf.download(" ".join(list(ALL_ASSETS.values())), start="2017-01-01", end="2017-04-30")
+#     def syncData(self):
+#         data = yf.download(" ".join(list(ALL_ASSETS.values())), start="2017-01-01", end="2017-04-30")
 
 
