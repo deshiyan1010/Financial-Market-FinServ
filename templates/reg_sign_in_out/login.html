@@ -1,44 +1,88 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% load static %}
-{% block head_block %}
-<style>
-  #color{
-    color: darkgrey; !important
-  }
-  body {
-    text-align: center;
-}
-form {
-    display: inline-block;
-}
-</style>
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'login/login.css'%}"> -->
-{% endblock head_block %}
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Star Admin2 </title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="/static/dashboard/vendors/feather/feather.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/typicons/typicons.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/static/dashboard/css/vertical-layout-light/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="/static/dashboard/images/favicon.png" />
+</head>
 
-{% block body_block %}
-    {% csrf_token %}
-    <div align='center' class="center container" id='color'>
-      <form action="{% url 'reg_sign_in_out:user_login'%}" class="form-signin text-center blockx form-group" method="post">
-        {% csrf_token %}
-        <h1 class="h3 mb-3 font-weight-normal" id="h11">Please Sign In</h1>
-
-        <div class="row justify-content-center " >
-          <label for="username"  id="btn-white">Username</label>
-          <input type="text" name="username" id="username" class="formx input textinput textInput form-control form-control" placeholder="Username" required="" autofocus="">
-        </div><br>
-
-        <div class="row justify-content-center " >
-        <label for="inputPassword"  id="btn-white">Password</label>
-        <input type="password" name="password" id="inputPassword" class="formx input textinput textInput form-control form-control" placeholder="Password" required="">
-        </div><br>
-        {% if tried %}
-        <h7 id='color' >*Enter valid credentials</h7> <br>
-        {% endif %}      
-        <button class='btn btn-outline-info' type='submit'><a href="{% url 'reset_password' %}">Forgot Password</a></button><br><br>
-        
-        <button class='text-center btn btn-light' type="submit">Sign In</button>
-      </form>
+<body>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth px-0">
+        <div class="row w-100 mx-0">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              <div class="brand-logo">
+                <img src="/static/dashboard/images/logo.svg" alt="logo">
+              </div>
+              <h4>Hello! let's get started</h4>
+              <h6 class="fw-light">Sign in to continue.</h6>
+              <form class="pt-3" action="{% url 'reg_sign_in_out:user_login'%}" method="post">
+              {% csrf_token %}
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-lg" id="exampleInputEmail1" type="text" name="username" id="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" type="password" name="password" id="inputPassword" placeholder="Password">
+                </div>
+                  <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" type="submit">SIGN IN</button>
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                  <div class="form-check">
+                    <label class="form-check-label text-muted">
+                      <input type="checkbox" class="form-check-input">
+                      Keep me signed in
+                    </label>
+                  </div>
+                  <a href="{% url 'reset_password' %}" type='submit' class="auth-link text-black">Forgot password?</a>
+                </div>
+                <div class="mb-2">
+                  <button type="button" class="btn btn-block btn-facebook auth-form-btn">
+                    <i class="ti-facebook me-2"></i>Connect using facebook
+                  </button>
+                </div>
+                <div class="text-center mt-4 fw-light">
+                  Don't have an account? <a href="register.html" class="text-primary">Create</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
     </div>
-    <br><br><br><br>
-    {% endblock body_block %}
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="/static/dashboard/vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="/static/dashboard/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="/static/dashboard/js/off-canvas.js"></script>
+  <script src="/static/dashboard/js/hoverable-collapse.js"></script>
+  <script src="/static/dashboard/js/template.js"></script>
+  <script src="/static/dashboard/js/settings.js"></script>
+  <script src="/static/dashboard/js/todolist.js"></script>
+  <!-- endinject -->
+</body>
+
+</html>

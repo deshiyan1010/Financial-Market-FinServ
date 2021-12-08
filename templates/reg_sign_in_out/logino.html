@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block head_block %}
+<style>
+  #color{
+    color: darkgrey; !important
+  }
+  body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+</style>
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'login/login.css'%}"> -->
+{% endblock head_block %}
+
+{% block body_block %}
+    {% csrf_token %}
+    <div align='center' class="center container" id='color'>
+      <form action="{% url 'reg_sign_in_out:user_login'%}" class="form-signin text-center blockx form-group" method="post">
+        {% csrf_token %}
+        <h1 class="h3 mb-3 font-weight-normal" id="h11">Please Sign In</h1>
+
+        <div class="row justify-content-center " >
+          <label for="username"  id="btn-white">Username</label>
+          <input type="text" name="username" id="username" class="formx input textinput textInput form-control form-control" placeholder="Username" required="" autofocus="">
+        </div><br>
+
+        <div class="row justify-content-center " >
+        <label for="inputPassword"  id="btn-white">Password</label>
+        <input type="password" name="password" id="inputPassword" class="formx input textinput textInput form-control form-control" placeholder="Password" required="">
+        </div><br>
+        {% if tried %}
+        <h7 id='color' >*Enter valid credentials</h7> <br>
+        {% endif %}      
+        <button class='btn btn-outline-info' type='submit'><a href="{% url 'reset_password' %}">Forgot Password</a></button><br><br>
+        
+        <button class='text-center btn btn-light' type="submit">Sign In</button>
+      </form>
+    </div>
+    <br><br><br><br>
+    {% endblock body_block %}

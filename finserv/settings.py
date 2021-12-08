@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'finserv.startup',
     'crispy_forms',
     'dashboard',
     'reg_sign_in_out',
+    'portfolio',
 
 ]
 
@@ -149,7 +151,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL = 587
 EMAIL_HOST_USER = 'hotfiltercoffee@gmail.com'
-EMAIL_HOST_PASSWORD = 'realVinayak@201100'
+EMAIL_HOST_PASSWORD = '***'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -161,3 +163,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+from finserv.startup import Startup
+
+s = Startup()
