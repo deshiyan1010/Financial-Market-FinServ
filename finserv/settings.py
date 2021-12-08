@@ -128,7 +128,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
 
@@ -165,6 +165,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# from finserv.startup import Startup
-
-# s = Startup()
+from finserv.startup import Startup
+Startup()

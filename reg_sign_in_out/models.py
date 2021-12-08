@@ -1,11 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.gis.db import models as geo_models
 
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
-import sys
-from PIL import Image
+
 
 class Registration(models.Model):
 

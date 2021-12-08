@@ -8,7 +8,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-from django.contrib.gis.geos import Point
 import json
 import os
 from finserv.settings import STATIC_DIR
