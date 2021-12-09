@@ -165,5 +165,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-from finserv.startup import Startup
-Startup()
+# from finserv.startup import Startup
+# Startup()
