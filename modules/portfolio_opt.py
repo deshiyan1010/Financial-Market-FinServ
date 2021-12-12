@@ -16,10 +16,37 @@ import plotly.express as px
 from pprint import pprint
 import random
 
+
+
+import os
+
+from multitasking import createPool
+os.environ.setdefault("DJANGO_SETTINGS_MODULE","finserv.settings")
+
+from datetime import datetime
+from datetime import timedelta
+
+import django 
+# django.setup()
+
+
+from portfolio import models as pModels
+
+
+
 class PortfolioOptmizer:
 
-    def __init__(self,tickList=None,filename=None):
-        if filename==None and tickList!=None:
+    def __init__(self,tickList=None,filename=None,getFromDB=False):
+        if getFromDB==True and tickList!=None:
+            self.df = pd.DataFrame()
+
+            for ticker in tickList:
+                pass
+
+        elif getFromDB==True and tickList==None:
+            pass
+
+        elif filename==None and tickList!=None:
             self.df = self.getFromNet(tickList)
 
         elif filename!=None and tickList==None:
@@ -141,7 +168,8 @@ class PortfolioOptmizer:
 
         elif annualized_max_volatility!=None and annualized_min_return==None:
             self.w = self._weightsOptimizer(obj=obj,annualized_max_volatility=annualized_max_volatility)
-
+        elif obj=='Sharpe':
+            self.w = self._weightsOptimizer(obj=obj)
         else:
             raise Exception("Either annualized_min_return or annualized_max_volatility must be provided...")
 
@@ -227,7 +255,7 @@ if __name__=="__main__":
                             # tickList=['JCI', 'TGT', 'CMCSA', 'CPB', 'MO', 'APA', 'MMC', 'JPM',
                             # 'ZION', 'PSA', 'BAX', 'BMY', 'LUV', 'PCAR', 'TXT', 'TMO',
                             # 'DE', 'MSFT', 'HPQ', 'SEE', 'VZ', 'CNP', 'NI', 'T', 'BA'],
-                            filename='test.csv'
+                            filename='test.csv',getFromDB=False
                         )
     pprint(po.getWeights(obj='MaxRet',annualized_max_volatility=0.17))
     po.clusterPlot()

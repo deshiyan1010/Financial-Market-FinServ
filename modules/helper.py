@@ -240,12 +240,14 @@ def getIntoSameLine(line_dict):
     ending_date = datetime.strptime('1999/01/01','%Y/%m/%d')
 
     for portName, line in line_dict.items():
-        if start_date> datetime.strptime(line['date'][0],'%Y/%m/%d'):
-            start_date = datetime.strptime(line['date'][0],'%Y/%m/%d')
-        
-        if ending_date<datetime.strptime(line['date'][-1],'%Y/%m/%d'):
-            ending_date = datetime.strptime(line['date'][-1],'%Y/%m/%d')
-    
+        try:
+            if start_date> datetime.strptime(line['date'][0],'%Y/%m/%d'):
+                start_date = datetime.strptime(line['date'][0],'%Y/%m/%d')
+            
+            if ending_date<datetime.strptime(line['date'][-1],'%Y/%m/%d'):
+                ending_date = datetime.strptime(line['date'][-1],'%Y/%m/%d')
+        except:
+            pass
     dateArr = []
 
     for i in range(0,(ending_date-start_date).days+1):
@@ -253,13 +255,16 @@ def getIntoSameLine(line_dict):
     
     
     for portName, line in line_dict.items():
-        s = datetime.strptime(line['date'][0],'%Y/%m/%d')
-        total_None_insertions = (s-start_date).days
+        try:
+            s = datetime.strptime(line['date'][0],'%Y/%m/%d')
+            total_None_insertions = (s-start_date).days
+            
+            for i in range(total_None_insertions):
+                line['netWorth'].insert(0,None)
+                line['dayPnL'].insert(0,None)
+        except:
+            pass
         
-        for i in range(total_None_insertions):
-            line['netWorth'].insert(0,None)
-            line['dayPnL'].insert(0,None)
-
     dateArr = [d.strftime('%d/%m/%Y') for d in dateArr]
     return line_dict,dateArr
 

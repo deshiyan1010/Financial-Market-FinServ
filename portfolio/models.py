@@ -11,9 +11,11 @@ class Portfolio(models.Model):
     # uPortName2 = models.CharField(max_length=64)
     created_on = models.DateTimeField(auto_now_add=True)
     sold = models.BooleanField(default=False)
-    def save(self):
-        self.uPortName = self.user.username + self.uPortName
-        super(Portfolio, self).save()
+
+
+    # def save(self):
+    #     self.uPortName = self.user.username + self.uPortName
+    #     super(Portfolio, self).save()
 
     def __str__(self):
         return self.user.username+"-"+self.uPortName

@@ -7,7 +7,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 app_name = "portfolio"
 
 urlpatterns = [
-                # path('',views.dash,name='dash'),
+                path('addport/',views.addport,name='addport'),
             ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()
