@@ -100,11 +100,11 @@ def getLinePlot(assetName: str):
     assetDetailsObj = pModels.Assets.objects.get(assetName=assetName)
     assets_obj = pModels.AssetPriceMovements.objects.filter(ticker=assetDetailsObj).order_by('date')
     line_chart = []
-
+    date = []
     for priceO in assets_obj:
         line_chart.append(priceO.adj_close)
-    
-    return line_chart
+        date.append(priceO.date)
+    return line_chart,date
 
 
 def calcPortfolioGain(portObj):
@@ -305,10 +305,34 @@ def getIndPortLineChart(userObj):
 
 
 
+def getDateWiseLinePlot(portObj):
+
+    portGainsDict = gainChartUnrealizedProfitPortfolio(portObj)
+
+    netWorth = []
+    dayPnL = []
+
+    for date,pAssetDict in portGainsDict.items():
+        net = 0
+        profit = 0
+        for portAsset,details in pAssetDict.items():
+            net += details['netWorth']
+            profit += details['profit']
+
+        netWorth.append(net)
+        dayPnL.append(profit)
+    
+    for i in range(len(dayPnL)-1,0,-1):
+        dayPnL[i] = dayPnL[i] - dayPnL[i-1]
+
+    line_dict = {
+            'date': [d.strftime("%Y/%m/%d") for d in list(portGainsDict.keys())],
+            'netWorth':netWorth,
+            'dayPnL':dayPnL,
+    }
 
 
-
-
+    return line_dict
 
 
 
@@ -361,3 +385,15 @@ def getOverallPie(userObj):
 
     return weight_dict
 
+def getPortPie(portObj):
+    _,gain_dict,_,_ = calcPortfolioGain(portObj)
+
+    weight_dict = {}
+    currUSD = 0
+    for asset,dictx in gain_dict.items():
+        weight_dict[asset.asset.assetName] = dictx['currentAssetWorth']
+        currUSD += dictx['currentAssetWorth']
+
+    weight_dict = {x:y/currUSD*100 for x,y in weight_dict.items()}
+
+    return weight_dict

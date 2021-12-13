@@ -1,6 +1,10 @@
+from datetime import timedelta
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators import csrf
+from riskfolio.Portfolio import Portfolio
+from scipy import cluster
+from scipy.cluster.hierarchy import dendrogram
 from yfinance import ticker
 from portfolio import models as pModels
 from django.http import HttpResponseRedirect, HttpResponse
@@ -10,7 +14,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 from finserv.startup import ALL_ASSETS,ALL_ASSETS_REV
 
+from modules.helper import getLinePlot,calcPortfolioGain,gainChartUnrealizedProfitPortfolio,getPortPie,getDateWiseLinePlot
 from modules import portfolio_opt
+
+from pprint import pprint
+
+import plotly
+
 
 @login_required
 def sellPortfolio(request,port_id):
@@ -107,5 +117,55 @@ def addport(request):
 
 
 
-def portDetails():
-    pass
+def portdetails(request,portName):
+    portObj = pModels.Portfolio.objects.get(uPortName=portName)
+    assetList = pModels.PortfolioAssets.objects.filter(port=portObj)
+    indLinePlot = {}
+
+    for pAsset in assetList:
+        line,dateArr = getLinePlot(pAsset.asset.assetName)
+        indLinePlot[pAsset.asset.assetName] = line
+    
+    
+    dateArr = [cdate.strftime("%d/%m/%Y") for cdate in dateArr]
+
+    total_asset_dict,gains_dict,totalCurrProfit,totalCurrWorth = calcPortfolioGain(portObj)
+
+    portPie = getPortPie(portObj)
+
+    cum_line_dict = getDateWiseLinePlot(portObj)
+
+
+    port_opt_obj = portfolio_opt.PortfolioOptmizer(tickList=[ALL_ASSETS[ass] for ass in indLinePlot.keys()])
+
+    assetListabc = []
+    weightabc = []
+    for asset,weight in portPie.items():
+        assetListabc.append(ALL_ASSETS[asset])
+        weightabc.append(weight/100)
+
+
+    port_opt_obj.setWeigth(assetListabc,weightabc)
+
+    frontier = port_opt_obj.frontierPlotPlotly()
+    frontierArea = port_opt_obj.frontierAreaPlot()
+    cluster = port_opt_obj.clusterPlot()
+    dendrogram = port_opt_obj.dendrogramPlot()
+    
+
+
+    return render(request, 'portfolio/portdetails.html',context={
+        'cum_line':cum_line_dict,
+        'portPie':portPie,
+        'curProfit':totalCurrProfit,
+        'curWorth':totalCurrWorth,
+        'gainDict':gains_dict,
+        'allAssets': total_asset_dict,
+        'portName':portObj.uPortName,
+        'dateArr':dateArr,
+        'indLine':indLinePlot,
+        'frontier':frontier,
+        'frontierArea':frontierArea,
+        'dendrogram':dendrogram,
+        'cluster':cluster,
+    })

@@ -20,7 +20,7 @@ class Portfolio(models.Model):
     def __str__(self):
         return self.user.username+"-"+self.uPortName
 
-
+# 
 class Assets(models.Model):
     assetName = models.CharField(max_length=64,primary_key=True)
     assetTicker = models.CharField(max_length=8)

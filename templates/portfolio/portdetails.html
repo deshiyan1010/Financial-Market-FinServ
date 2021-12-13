@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+{% block head_block %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Portfolio Details</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="/static/dashboard/vendors/feather/feather.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/typicons/typicons.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="/static/dashboard/vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/static/dashboard/css/vertical-layout-light/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="/static/dashboard/images/favicon.png" />
+
+{% endblock head_block %}
+  
+  
+  
+
+{% block body_block %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+  <div class="container-scroller" style="padding-right: 75px;padding-left: 75px;">
+    <h1 style="padding-left: 30px;padding-top: 150px;">{{portName}}</h1>
+    <div class="">
+      <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Net Worth Chart</h2>
+              <canvas id="myChart" style="width:100%;max-width:1200px"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Profit</h4>
+              <canvas id="myChartBar" style="width:100%;max-width:750px"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Portfolio Doughnut</h4>
+              <canvas id="myChartDoughnut" style="width:100%;max-width:750px"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Risk Metrics</h4>
+              <div class="table-responsive pt-3">
+                <table class="table table-white">
+                  <thead>
+                    <tr>
+                      <th>
+                        #
+                      </th>
+                      <th>
+                        Asset Name
+                      </th>
+                      <th>
+                        Risk
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        1
+                      </td>
+                      <td>
+                        Herman Beck
+                      </td>
+                      <td>
+                        $ 77.99
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Individual Asset Performance</h4>
+              <canvas id="myChartMultiple" style="width:100%;max-width:1200px"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Frontier Plot</h4>
+              <div class=""><a onclick="myFunction(1)" class="btn btn-primary text-white me-0"><i
+                class="icon-box"></i>Show Chart</a></div>
+              <div id="myDIV1">
+                <div class="col-lg-20 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      
+
+                      {{ frontier | safe }}
+                      
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Frontier Area Plot</h4>
+              <div class=""><a onclick="myFunction(2)" class="btn btn-primary text-white me-0"><i
+                class="icon-box"></i>Show Chart</a></div>
+              <div id="myDIV2">
+                <div class="col-lg-20 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      
+
+                      {{ frontierArea | safe }}
+                      
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Dendrogram</h4>
+              <div class=""><a onclick="myFunction(3)" class="btn btn-primary text-white me-0"><i
+                class="icon-box"></i>Show Chart</a></div>
+              <div id="myDIV3">
+                <div class="col-lg-20 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Porfolio Name</h4>
+                      
+
+                      {{ dendrogram | safe }}
+                      
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Cluster Plot</h4>
+              <div class=""><a onclick="myFunction(4)" class="btn btn-primary text-white me-0"><i
+                class="icon-box"></i>Show Chart</a></div>
+              <div id="myDIV4">
+                <div class="col-lg-20 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Porfolio Name</h4>
+                      
+
+                      {{ cluster | safe }}
+                      
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="/static/dashboard/vendors/js/vendor.bundle.base.js"></script>
+
+  <script src="/static/dashboard/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+
+  <script src="/static/dashboard/js/off-canvas.js"></script>
+  <script src="/static/dashboard/js/hoverable-collapse.js"></script>
+  <script src="/static/dashboard/js/template.js"></script>
+  <script src="/static/dashboard/js/settings.js"></script>
+  <script src="/static/dashboard/js/todolist.js"></script>
+
+  <script>
+
+    var cum_line = {{ cum_line | safe }}
+    var xValues = cum_line['date'];
+    var yValues = cum_line['netWorth'];
+
+    
+    new Chart("myChart", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(0,0,255,1.0)",
+          borderColor: "rgba(0,0,255,0.1)",
+          data: yValues
+        }]
+      },
+      options: {
+        legend: { display: false },
+        scales: {
+          // yAxes: [{ ticks: { min: 6, max: 16 } }],
+        }
+      }
+    });
+  </script>
+
+  <script>
+    var cum_line = {{ cum_line | safe }}
+    var xValues = cum_line['date'];
+    var yValues = cum_line['dayPnL'];
+    var redColor = '#00FF00';
+    var greenColor = '#FF0000';
+    var barColours = [];
+
+    for(let i=0;i<yValues.length;i++){
+      if(yValues[i]>=0)
+      barColours.push(redColor);
+      else
+      barColours.push(greenColor);
+    }
+    console.log(barColours);
+    new Chart("myChartBar", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColours,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Daily PnL"
+        }
+      }
+    });
+  </script>
+
+  <script>
+    var portPieDict = {{ portPie | safe }};
+    console.log(Object.keys(portPieDict));
+    var xValues = Object.keys(portPieDict);
+    var yValues = Object.values(portPieDict);
+    var barColors = [
+          '#00008B', '#DC143C',
+          '#FF8C00', '#A52A2A', '#0000FF', '#DEB887',
+          '#FF7F50', '#8FBC8F', '#B22222', '#DAA520',
+          '#FFA07A', '#800000', '#9370DB', '#FFE4B5',
+          '#DEB887',
+        ];
+
+    new Chart("myChartDoughnut", {
+      type: "doughnut",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: "Portfolio Composition"
+        }
+      }
+    });
+  </script>
+
+  <script>
+    var xValues = {{ dateArr | safe }};
+    var datasets = [];
+    var linedict = {{ indLine | safe}};
+    var ptr = 0;
+
+    for(let key in linedict){
+      datasets.push(
+        {
+          label:key,
+          data: linedict[key],
+          borderColor: barColors[ptr],
+          fill: false
+        }
+      )
+      ptr+=1;
+    }
+
+    new Chart("myChartMultiple", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: datasets
+      },
+      options: {
+      }
+    });
+  </script>
+
+  <script>
+    for(int i=1;i<5;i++){
+      var x = document.getElementById("myDIV"+i);
+      x.style.display="none";
+    }
+    function myFunction(i) {
+      var x = document.getElementById("myDIV"+i);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
+
+  <script>
+    var cum_line = {{ cum_line | safe }}
+    var xValues = Object.keys(cum_line);
+    var yValues = Object.values(cum_line);
+
+    new Chart("myChart2", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(0,0,255,1.0)",
+          borderColor: "rgba(0,0,255,0.1)",
+          data: yValues
+        }]
+      },
+      options: {
+        legend: { display: false },
+        scales: {
+          yAxes: [{ ticks: { min: 6, max: 16 } }],
+        }
+      }
+    });
+  </script>
+
+{% endblock body_block %}

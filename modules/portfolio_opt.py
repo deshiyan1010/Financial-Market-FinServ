@@ -16,7 +16,10 @@ import plotly.express as px
 from pprint import pprint
 import random
 
+from io import StringIO
 
+
+import numpy as np
 
 import os
 
@@ -27,10 +30,12 @@ from datetime import datetime
 from datetime import timedelta
 
 import django 
+
+import plotly
 # django.setup()
 
 
-from portfolio import models as pModels
+# from portfolio import models as pModels
 
 
 
@@ -47,6 +52,7 @@ class PortfolioOptmizer:
             pass
 
         elif filename==None and tickList!=None:
+            print("Fetching from online.")
             self.df = self.getFromNet(tickList)
 
         elif filename!=None and tickList==None:
@@ -65,6 +71,10 @@ class PortfolioOptmizer:
         self.hist = True 
         self.rf = 0
         self.l = 0
+
+        self.wDF = None
+
+
 
     def getFromFile(self,filename):
         df = pd.read_csv(filename,index_col='Date')
@@ -90,15 +100,20 @@ class PortfolioOptmizer:
     def cleanWeights(self):
         self.wCleaned = {x:round(y,4) for x,y in self.w.items() if round(y,4)!=0}
 
-    def _weightsOptimizer(self,obj='Sharpe',annualized_min_return=None,annualized_max_volatility=None,t_factor=252):
+    def _weightsOptimizer(self,obj='Sharpe',annualized_min_return=None,annualized_max_volatility=None,weights=None,t_factor=252):
 
-        if annualized_min_return!=None and annualized_max_volatility==None:
-            self.portfolio.lowerret=annualized_min_return/t_factor
+        if weights==None:
+            if annualized_min_return!=None and annualized_max_volatility==None:
+                self.portfolio.lowerret=annualized_min_return/t_factor
 
-        elif annualized_max_volatility!=None and annualized_min_return==None:
-            self.portfolio.upperdev=annualized_max_volatility/t_factor**0.5
+            elif annualized_max_volatility!=None and annualized_min_return==None:
+                self.portfolio.upperdev=annualized_max_volatility/t_factor**0.5
 
-        self.wDF = self.portfolio.optimization(model=self.model, rm=self.rm, obj=obj, rf=self.rf, l=self.l, hist=self.hist)
+            self.wDF = self.portfolio.optimization(model=self.model, rm=self.rm, obj=obj, rf=self.rf, l=self.l, hist=self.hist)
+        
+        else:
+            pass
+        
         return {x:y for x,y in zip(self.tickList,np.array(self.wDF.T)[0])}
 
 
@@ -131,7 +146,7 @@ class PortfolioOptmizer:
         plt.show()
 
 
-    def frontierPlotPlotly(self,points=100,t_factor=252):
+    def frontierPlotPlotly(self,points=50,t_factor=252):
         X1 = []
         Y1 = []
         Z1 = []
@@ -157,7 +172,9 @@ class PortfolioOptmizer:
             Y1.append(ret)
             Z1.append(ratio)
         fig = px.scatter(x=X1, y=Y1, color=Z1)
-        fig.show()
+        # fig.show()
+        graph_div = plotly.offline.plot(fig, auto_open = False, output_type="div")
+        return graph_div
 
 
 
@@ -177,6 +194,11 @@ class PortfolioOptmizer:
 
         return self.w
 
+    def setWeigth(self,tickList,weights):
+        df = pd.DataFrame([tickList,weights]).T
+        df.columns = ['asset','weights']
+        df = df.set_index('asset')
+        self.wDF = df
 
     def getRiskStats(self,t_factor=252):
         returns = self.portfolio.returns['JCI']
@@ -236,26 +258,47 @@ class PortfolioOptmizer:
             ))
 
         fig.update_layout(yaxis_range=(0, 1))
-        fig.show()
+        return plotly.offline.plot(fig, auto_open = False, output_type="div")
 
     def dendrogramPlot(self):
         ax = plf.plot_dendrogram(returns=self.portfolio.returns, codependence='spearman',
                         linkage='ward', k=None, max_k=10,
                         leaf_order=True, ax=None)
-        plt.show()
+
+        imgdata = StringIO()
+
+        fig = plt.gcf()
+        fig.savefig(imgdata, format='svg')
+        imgdata.seek(0)
+
+        data = imgdata.getvalue()
+        return data
 
     def clusterPlot(self):
         ax = plf.plot_clusters(returns=self.portfolio.returns, codependence='spearman',
                       linkage='ward', k=None, max_k=10,
                       leaf_order=True, dendrogram=True, ax=None)
 
-        plt.show()
+        imgdata = StringIO()
+
+        fig = plt.gcf()
+        fig.savefig(imgdata, format='svg')
+        imgdata.seek(0)
+
+        data = imgdata.getvalue()
+        return data
+
+        
 if __name__=="__main__":
+    tickList = ['JCI', 'TGT', 'CMCSA', 'CPB', 'MO', 'APA', 'MMC', 'JPM',
+                'ZION', 'PSA', 'BAX', 'BMY', 'LUV', 'PCAR', 'TXT', 'TMO',
+                'DE', 'MSFT', 'HPQ', 'SEE', 'VZ', 'CNP', 'NI', 'T', 'BA']
     po = PortfolioOptmizer(
-                            # tickList=['JCI', 'TGT', 'CMCSA', 'CPB', 'MO', 'APA', 'MMC', 'JPM',
-                            # 'ZION', 'PSA', 'BAX', 'BMY', 'LUV', 'PCAR', 'TXT', 'TMO',
-                            # 'DE', 'MSFT', 'HPQ', 'SEE', 'VZ', 'CNP', 'NI', 'T', 'BA'],
+                            # tickList=tickList
                             filename='test.csv',getFromDB=False
                         )
-    pprint(po.getWeights(obj='MaxRet',annualized_max_volatility=0.17))
+    # pprint(po.getWeights(obj='MaxRet',annualized_max_volatility=0.17))
+    
+    weights = np.array([1/(2*len(tickList))]*len(tickList))
+    po.setWeigth(weights)
     po.clusterPlot()

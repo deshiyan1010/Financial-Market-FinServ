@@ -14,7 +14,7 @@
   <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
       <li class="nav-item">
-        <a class="nav-link" href="">
+        <a class="nav-link" onclick="gotoid('#check')">
           <i class="mdi mdi-grid-large menu-icon"></i>
           <span class="menu-title">Dashboard</span>
         </a>
@@ -318,8 +318,11 @@
                             <div class="d-sm-flex justify-content-between align-items-start">
                               <div>
                                 <h4 class="card-title card-title-dash">Portfolio's</h4>
-                              </div>
+                                
                             </div>
+                            <div align="right"><a href="{% url 'portfolio:addport' %}" class="btn btn-primary text-white me-0"><i
+                                            class="icon-marquee-plus"> Add Portfolio</i></a></div>
+                              </div>
                             <div class="table-responsive  mt-1">
                               <table class="table select-table">
                                 <thead>
@@ -361,7 +364,7 @@
                                     </td>
 
                                     <td>
-                                      <div class=""><a href="" class="btn btn-primary text-white me-0"><i
+                                      <div class=""><a href="{% url 'portfolio:portdetails' key.uPortName %}" class="btn btn-primary text-white me-0"><i
                                             class="icon-box"></i>Detailed Report</a></div>
                                     </td>
                                   </tr>
@@ -678,7 +681,8 @@
                                           {{request.user.last_name}}</p>
                                       </div>
                                     </div>
-                                    <div class="text-muted text-small">
+                                    <div class="text-muted text-small" id="check">
+                                      hello
                                     </div>
                                   </div>
                                 </div>
@@ -852,9 +856,20 @@
       }
     }
   });
-
-
 </script>
+
+
+<script>
+  function gotoid(id) {
+            console.log(id);
+            var elem = $(id);
+            if(elem) {
+                $('html').scrollTop(elem.offset().top);
+                $('html').scrollLeft(elem.offset().left);
+            }
+        }
+</script>
+
 
 {% endblock body_block %}
 
