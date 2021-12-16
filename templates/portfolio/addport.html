@@ -105,15 +105,16 @@
         {% csrf_token %}
         <input type="text" class="form-control mb-2 mr-sm-2" id='assetName' name='assetName'
             placeholder="Asset Name">
-
-        <label class="sr-only" for="inlineFormInputGroupUsername2">Amount</label>
-        <div class="input-group mb-2 mr-sm-2" id="divAmt">
-            <div class="input-group-prepend">
-                <div class="input-group-text">$</div>
+        <div class="divAmt" style="visibility: visible;">
+            <label class="sr-only" for="inlineFormInputGroupUsername2">Amount</label>
+            <div class="input-group mb-2 mr-sm-2" id="divAmt" >
+                <div class="input-group-prepend">
+                    <div class="input-group-text">$</div>
+                </div>
+                {% csrf_token %}
+                <input type="text" class="form-control" id='assetAmount' name='assetAmount'
+                    placeholder="Amount">
             </div>
-            {% csrf_token %}
-            <input type="text" class="form-control" id='assetAmount' name='assetAmount'
-                placeholder="Amount">
         </div>
         <div class="form-check mx-sm-2">
             <input id="clickMe" type="button" value="Remove" onclick="del(this);" />
@@ -171,8 +172,21 @@
     };
 
     function algopic() {
-        // var checkBox = document.getElementById("opt");
-        // checkBox.checked = true;
+        var checkBox = document.getElementById("opt");
+        var x = document.getElementById('holder');
+        console.log(x);
+        x = x.getElementsByClassName("divAmt");
+        if(checkBox.checked){
+            
+            for(var i=0;i<x.length ;i++){
+                    x[i].style.visibility = "hidden";
+            }
+        }
+        else{
+            for(var i=0;i<x.length;i++){
+                x[i].style.visibility = "visible";
+            }
+        }
     };
 
 
