@@ -78,7 +78,7 @@ def addport(request):
                 amount = request.POST.get('assetAmount'+str(i))
                 if assetName!=None:
                     assets[assetName] = float(amount)
-
+            print(assets)
             for asset, amount in assets.items():
                 addAssetToPort(create_port,asset,amount)
 
@@ -149,8 +149,8 @@ def portdetails(request,portName):
 
     frontier = port_opt_obj.frontierPlotPlotly()
     frontierArea = port_opt_obj.frontierAreaPlot()
-    cluster = port_opt_obj.clusterPlot()
-    dendrogram = port_opt_obj.dendrogramPlot()
+    # cluster = port_opt_obj.clusterPlot()
+    # dendrogram = port_opt_obj.dendrogramPlot()
     
 
 
@@ -166,6 +166,6 @@ def portdetails(request,portName):
         'indLine':indLinePlot,
         'frontier':frontier,
         'frontierArea':frontierArea,
-        'dendrogram':dendrogram,
-        'cluster':cluster,
+        # 'dendrogram':dendrogram,
+        # 'cluster':cluster,
     })

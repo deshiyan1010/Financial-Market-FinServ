@@ -1,0 +1,583 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+{% block body_block %}
+
+
+<div class="container-fluid page-body-wrapper">
+  <!-- partial:partials/_settings-panel.html -->
+
+
+  <nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" onclick="gotoid('#maindiv')">
+          <i class="mdi mdi-grid-large menu-icon"></i>
+          <span class="menu-title">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="gotoid('#perfchart')">
+          <i class="mdi mdi-grid-large menu-icon"></i>
+          <span class="menu-title">Performance Chart</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="gotoid('#newsid')">
+          <i class="mdi mdi-grid-large menu-icon"></i>
+          <span class="menu-title">News</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="gotoid('#collport')">
+          <i class="mdi mdi-grid-large menu-icon"></i>
+          <span class="menu-title">Collective Portfolio</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="gotoid('#dailypnl')">
+          <i class="mdi mdi-grid-large menu-icon"></i>
+          <span class="menu-title">Daily PnL</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="gotoid('#portlist')">
+          <i class="mdi mdi-grid-large menu-icon"></i>
+          <span class="menu-title">Portfolio List</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- partial -->
+  <div class="main-panel" id="maindiv">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="home-tab">
+            <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+              <ul class="nav nav-tabs" role="tablist">
+                
+              </ul>
+              <div>
+                <div class="btn-wrapper">
+                  <a href="{% url 'logout' %}" class="btn btn-primary text-white me-0"><i class="icon-download"></i>
+                    Logout</a>
+                </div>
+              </div>
+            </div>
+            <div class="tab-content tab-content-basic">
+              <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="statistics-details d-flex align-items-center justify-content-between">
+
+                      {% for key, values in topAssets.items %}
+                      <div>
+                        <p class="statistics-title">{{key}}</p>
+                        <h3 class="rate-percentage">{{values.price}}</h3>
+                        {% if values.perchg > 0 %}
+                        <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>{{values.perchg}}</span></p>
+                        {% elif values.perchg < 0 %} <p class="text-danger d-flex"><i
+                            class="mdi mdi-menu-down"></i><span>{{values.perchg}}</span></p>
+                          {% else %}
+                          <p class="text-light-green d-flex"><i
+                              class="mdi mdi-menu-sleep"></i><span>{{values.perchg}}</span></p>
+                          {% endif %}
+                      </div>
+                      {% endfor %}
+
+                    </div>
+                  </div>
+                </div>
+                <div class="row" id="perfchart">
+                  <div class="col-lg-8 d-flex flex-column">
+                    <div class="row flex-grow">
+                      <div class="col-12 col-lg-4 col-lg-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title card-title-dash">Performance Line Chart</h4>
+                                <h5 class="card-subtitle card-subtitle-dash">Select Portfolio To See Individually</h5>
+                              </div>
+                              <div id="performance-line-legend"></div>
+                            </div>
+                            <canvas id="lineChart"></canvas>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 d-flex flex-column">
+                    <div class="row flex-grow">
+                      <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                        <div class="card bg-primary card-rounded">
+                          <div class="card-body pb-0">
+                            <h4 class="card-title card-title-dash text-white mb-4">Cummulative Summary</h4>
+                            <div class="row">
+                              <div class="col-sm-8">
+                                <p class="status-summary-ight-white mb-1">Net Worth</p>
+                                <h2 class="text-info">{{overall.netWorth}}</h2>
+                              </div>
+                              <div class="col-sm-8">
+                                <p class="status-summary-ight-white mb-1">Total Profits</p>
+                                <h2 class="text-info">{{overall.profit}}</h2>
+                              </div>
+                              <div class="col-sm-8">
+                                <div class="status-summary-chart-wrapper pb-4">
+                                  <canvas id="status-summary"></canvas>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-8 d-flex flex-column">
+                    <div class="row flex-grow" id='collport'>
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div style="padding-bottom: 80px"
+                              class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title card-title-dash">Collective Portfolio</h4>
+                                <p class="card-subtitle card-subtitle-dash">Portfolio Collective Net Worth</p>
+                              </div>
+
+                              <div>
+                              </div>
+                            </div>
+                            <div class="d-sm-flex align-items-center mt-1 justify-content-between">
+                              <canvas id="pieChart"></canvas>
+                              <div class="me-3">
+                                <div id="marketing-overview-legend"></div>
+                              </div>
+                            </div>
+                            <div class="chartjs-bar-wrapper mt-3">
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row flex-grow" id="dailypnl">
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div style="padding-bottom: 80px"
+                              class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title card-title-dash">Daily PnL</h4>
+                                <p class="card-subtitle card-subtitle-dash">Daywise Report</p>
+                              </div>
+                              <div>
+                              </div>
+                            </div>
+                            <div class="d-sm-flex align-items-center mt-1 justify-content-between">
+                              <canvas id="stackPlot"></canvas>
+                              <div class="me-3">
+                                <div id="marketing-overview-legend"></div>
+                              </div>
+                            </div>
+                            <div class="chartjs-bar-wrapper mt-3">
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row flex-grow">
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card card-rounded table-darkBGImg">
+                          <div class="card-body">
+                            <div class="col-sm-8">
+                              <h3 class="text-white upgrade-info mb-0">
+                                Participate in <span class="fw-bold">Portfolio Competition</span> and win exciting
+                                prizes.
+                              </h3>
+                              <a href="#" class="btn btn-info upgrade-btn">Participate Now!</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row flex-grow" id='portlist'>
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title card-title-dash">Portfolio's</h4>
+                                
+                            </div>
+                            <div align="right"><a href="{% url 'portfolio:addport' %}" class="btn btn-primary text-white me-0"><i
+                                            class="icon-marquee-plus"> Add Portfolio</i></a></div>
+                              </div>
+                            <div class="table-responsive  mt-1">
+                              <table class="table select-table">
+                                <thead>
+                                  <tr>
+                                    <th>
+                                      <div class="form-check form-check-flat mt-0">
+                                        <label class="form-check-label">
+                                          <input type="checkbox" class="form-check-input" aria-checked="false"><i
+                                            class="input-helper"></i></label>
+                                      </div>
+                                    </th>
+                                    <th>Portfolio Name</th>
+                                    <th>Total Profit</th>
+                                    <th>Portfolio Net Worth</th>
+                                    <th>View Details</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+
+
+
+                                  {% for key, values in ports.items %}
+                                  <tr>
+                                    <td></td>
+                                    <td>
+                                      <div class="d-flex ">
+                                        <div>
+                                          <h6>{{key.uPortName}}</h6>
+                                          <p>{{key.created_on}}</p>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <h6>{{values.totalCurrProfit}}</h6>
+                                    </td>
+
+                                    <td>
+                                      <h6>{{values.totalCurrWorth}}</h6>
+                                    </td>
+
+                                    <td>
+                                      <div class=""><a href="{% url 'portfolio:portdetails' key.uPortName %}" class="btn btn-primary text-white me-0"><i
+                                            class="icon-box"></i>Detailed Report</a></div>
+                                    </td>
+                                  </tr>
+
+
+                                  {% endfor %}
+
+
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 d-flex flex-column">
+                    <div class="row flex-grow" id='newsid'>
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                  <h4 class="card-title card-title-dash">News</h4>
+                                  <div class="add-items d-flex mb-0">
+                                    <!-- <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?"> -->
+
+                                  </div>
+                                </div>
+                                <div class="list-wrapper">
+                                  <ul class="todo-list todo-list-rounded">
+                                    {% for n in news %}
+
+
+                                    <li class="d-block">
+                                      <div class="form-check w-100">
+                                        <label class="form-check-label">
+                                          <a href={{n.1}}><input class="checkbox" type="checkbox"> {{n.0}} <i
+                                              class="input-helper rounded"></i></a>
+                                        </label>
+                                        <div class="d-flex mt-2">
+                                          <div class="ps-4 text-small me-3">{{n.2}}</div>
+                                        </div>
+                                      </div>
+                                    </li>
+
+                                    {% endfor %}
+
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row flex-grow">
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                  <div>
+                                    <h4 class="card-title card-title-dash">Top Assets</h4>
+                                  </div>
+                                </div>
+                                <div class="mt-3">
+                                  <div
+                                    class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                                    <div class="d-flex">
+                                      <!-- <img class="img-sm rounded-10" src="/static/dashboard/images/faces/face1.jpg" alt="profile"> -->
+                                      <div class="wrapper ms-3">
+                                        <p class="ms-1 mb-1 fw-bold">Bajaj Finance</p>
+                                        <small class="text-muted mb-0">7050</small>
+                                      </div>
+                                    </div>
+                                    <div class="text-muted text-small">
+                                      <!-- 1h ago -->
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                                    <div class="d-flex">
+                                      <!-- <img class="img-sm rounded-10" src="/static/dashboard/images/faces/face2.jpg" alt="profile"> -->
+                                      <div class="wrapper ms-3">
+                                        <p class="ms-1 mb-1 fw-bold">Infosys</p>
+                                        <small class="text-muted mb-0">1775</small>
+                                      </div>
+                                    </div>
+                                    <div class="text-muted text-small">
+                                      <!-- 1h ago -->
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                                    <div class="d-flex">
+                                      <!-- <img class="img-sm rounded-10" src="/static/dashboard/images/faces/face3.jpg" alt="profile"> -->
+                                      <div class="wrapper ms-3">
+                                        <p class="ms-1 mb-1 fw-bold">Tech Mahindra</p>
+                                        <small class="text-muted mb-0">1666</small>
+                                      </div>
+                                    </div>
+                                    <div class="text-muted text-small">
+                                      <!-- 1h ago -->
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                                    <div class="d-flex">
+                                      <!-- <img class="img-sm rounded-10" src="/static/dashboard/images/faces/face4.jpg" alt="profile"> -->
+                                      <div class="wrapper ms-3">
+                                        <p class="ms-1 mb-1 fw-bold">Bajaj Finserv</p>
+                                        <small class="text-muted mb-0">17025</small>
+                                      </div>
+                                    </div>
+                                    <div class="text-muted text-small">
+                                      <!-- 1h ago -->
+                                    </div>
+                                  </div>
+     
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
+            href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from
+          BootstrapDash.</span>
+        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2021. All rights
+          reserved.</span>
+      </div>
+    </footer>
+    <!-- partial -->
+  </div>
+  <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+<!-- container-scroller -->
+
+<!-- plugins:js -->
+<script src="/static/dashboard/vendors/js/vendor.bundle.base.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="/static/dashboard/vendors/chart.js/Chart.min.js"></script>
+<script src="/static/dashboard/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="/static/dashboard/vendors/progressbar.js/progressbar.min.js"></script>
+
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="/static/dashboard/js/off-canvas.js"></script>
+<script src="/static/dashboard/js/hoverable-collapse.js"></script>
+<script src="/static/dashboard/js/template.js"></script>
+<script src="/static/dashboard/js/settings.js"></script>
+<script src="/static/dashboard/js/todolist.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="/static/dashboard/js/dashboard.js"></script>
+<script src="/static/dashboard/js/Chart.roundedBarCharts.js"></script>
+<!-- End custom js for this page-->
+
+<script>
+  //line
+  var None = null;
+  var ctxL = document.getElementById("lineChart").getContext('2d');
+  var dataLine = []
+  var indPortLine = {{ indPortLine | safe}};
+  var ptr = 0;
+  var colorArr = [
+    '#00008B', '#DC143C',
+    '#FF8C00', '#A52A2A', '#0000FF', '#DEB887',
+    '#FF7F50', '#8FBC8F', '#B22222', '#DAA520',
+    '#FFA07A', '#800000', '#9370DB', '#FFE4B5',
+    '#DEB887',
+  ];
+
+
+  for (let port in indPortLine) {
+    dataLine.push(
+      {
+        label: port,
+        data: indPortLine[port]['netWorth'],
+        backgroundColor: [
+          'rgba(0, 255, 0, 0.05)',
+        ],
+        borderColor: [
+          colorArr[ptr],
+        ],
+        borderWidth: 2
+      }
+    )
+    ptr++;
+  }
+
+  var myLineChart = new Chart(ctxL, {
+    type: 'line',
+    data: {
+      labels: {{ dateArr | safe}},
+  datasets: dataLine
+      },
+  options: {
+    responsive: true
+  }
+    });
+</script>
+
+
+<script>
+
+
+  var pie = {{ pie | safe}};
+  console.log(Object.keys(pie));
+
+
+  var ctxLp = document.getElementById("pieChart").getContext('2d');
+  Chart.defaults.scale.ticks.beginAtZero = true;
+
+  var myPieChart = new Chart(ctxLp, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(pie),
+      datasets: [{
+        label: 'Points',
+        data: Object.values(pie),
+        backgroundColor: [
+          '#00008B', '#DC143C',
+          '#FF8C00', '#A52A2A', '#0000FF', '#DEB887',
+          '#FF7F50', '#8FBC8F', '#B22222', '#DAA520',
+          '#FFA07A', '#800000', '#9370DB', '#FFE4B5',
+          '#DEB887',
+        ],
+
+        borderWidth: 2
+      }]
+    },
+  });
+
+  console.log(myPieChart)
+</script>
+
+
+<script>
+
+  var ctx = document.getElementById("stackPlot").getContext('2d');
+  var datasetArr = []
+  var ptr = 0;
+  for (let port in indPortLine){
+    datasetArr.push(
+      {
+        label: port,
+        data: indPortLine[port]['dayPnL'],
+        backgroundColor: colorArr[ptr]
+      }
+    )
+    ptr++;
+  }
+
+  var chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ dateArr | safe}}, 
+    datasets: datasetArr,
+    },
+    options: {
+      responsive: true,
+        legend: {
+        position: 'right' // place legend on the right side of chart
+      },
+      scales: {
+        xAxes: [{
+          stacked: true // this should be set to make the bars stacked
+        }],
+          yAxes: [{
+            stacked: true // this also..
+          }]
+      }
+    }
+  });
+</script>
+
+
+<script>
+  function gotoid(id) {
+            console.log(id);
+            var elem = $(id);
+            if(elem) {
+                $('html').scrollTop(elem.offset().top);
+                $('html').scrollLeft(elem.offset().left);
+            }
+        }
+</script>
+
+
+{% endblock body_block %}
+
+</html>

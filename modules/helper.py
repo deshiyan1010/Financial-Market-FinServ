@@ -264,7 +264,8 @@ def getIntoSameLine(line_dict):
                 line['dayPnL'].insert(0,None)
         except:
             pass
-        
+        line['netWorth'] = [x if x>0 else None for x in line['netWorth'] ]
+        # line['dayPnL'] = [x if x>0 else None for x in line['dayPnL'] ]
     dateArr = [d.strftime('%d/%m/%Y') for d in dateArr]
     return line_dict,dateArr
 

@@ -59,7 +59,7 @@ class Startup():
             
         except Exception as e:
             print(e)
-            self.lastUpdated = '2021-11-15'
+            self.lastUpdated = '2021-11-11'
 
         self.today = datetime.now().strftime("%Y-%m-%d")
         print(self.lastUpdated,self.today)

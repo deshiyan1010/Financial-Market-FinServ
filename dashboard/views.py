@@ -14,7 +14,7 @@ def dash(request):
 
 
     #List of news [(title,link,published)]
-    sorted_news = getNews()[:10]
+    sorted_news = getNews()[:15]
 
     #{asset:price}
     topAssets = getTickerData()
@@ -36,7 +36,7 @@ def dash(request):
     
 
 
-    return render(request, 'dashboard/dashnew.html',context=
+    return render(request, 'dashboard/dashnewft.html',context=
                     {
                         'topAssets':topAssets,
                         'news':sorted_news,
