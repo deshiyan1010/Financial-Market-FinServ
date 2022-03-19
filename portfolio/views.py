@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators import csrf
@@ -27,26 +27,49 @@ def sellPortfolio(request,portName):
     portObj = pModels.Portfolio.objects.get(uPortName=portName)
     portObj.sold = True
     portObj.sold_on = timezone.now()
-    portObj.save()
+    realized_profit = 0
 
     for asset in assetObjectist:
-        asset.sold = True
-        asset.sold_on = timezone.now()
-        asset.sold_for_usd = pModels.AssetPriceMovements.objects.filter(ticker=asset.asset).latest('date').adj_close * asset.assetQuantity
-        asset.save()
+        if asset.sold==False:
+            asset.sold = True
+            asset.sold_on = timezone.now()
+            asset.sold_for_usd = pModels.AssetPriceMovements.objects.filter(ticker=asset.asset).latest('date').adj_close * asset.assetQuantity
+            asset.save()
+            realized_profit += asset.sold_for_usd - asset.usdSpent
 
+
+    portObj.realized_profit += realized_profit
+    portObj.save()
 
     return HttpResponseRedirect(reverse('dashboard:dash'))
 
 
     #<a class='col-lg-2 col-md-2 btn btn-success' href="{% url 'portfolio:sellPortfolio' port.id %}">Sell</a>
 
+def sellAsset(request,portName,assetName):
+
+    _sellAsset(portName,assetName,True)
+
+    return HttpResponseRedirect(reverse('portfolio:portdetails',args=[portName]))  
+
+def _sellAsset(portName,assetName,realized):
+
+    asset = pModels.PortfolioAssets.objects.get(port__uPortName=portName,asset__assetName=assetName,sold=False)
+    asset.sold = True
+    asset.sold_on = datetime.now()
+    asset.sold_for_usd = pModels.AssetPriceMovements.objects.filter(ticker__assetName=assetName).latest('date').adj_close * asset.assetQuantity
+    asset.save()
+
+    portObj = pModels.Portfolio.objects.get(uPortName=portName)
+    portObj.realized_profit += asset.sold_for_usd - asset.usdSpent
+    portObj.save()
+
 
 def addAssetToPort(portObj,assetName,USD):
     assetObj = pModels.Assets.objects.get(assetName=assetName)
     cPrice = pModels.AssetPriceMovements.objects.filter(ticker=assetObj).latest('date').adj_close
     amtAssetOwned = USD/cPrice
-    portAsset = pModels.PortfolioAssets.objects.create(port=portObj,asset=assetObj,assetQuantity=amtAssetOwned,usdSpent=USD)
+    portAsset = pModels.PortfolioAssets.objects.create(port=portObj,asset=assetObj,assetQuantity=amtAssetOwned,usdSpent=USD,bought_on=datetime.now())
     portAsset.save()
 
 @csrf_exempt
@@ -61,15 +84,10 @@ def addport(request):
         letOptPick = True if 'ap' in request.POST else False
 
         portName = request.POST.get('portName')
-        create_port = pModels.Portfolio.objects.create(user=request.user,uPortName=portName)
+        create_port = pModels.Portfolio.objects.create(user=request.user,uPortName=portName,created_on=datetime.now())
         create_port.save()
 
-        
-
-
         grandAmount = float(request.POST.get('amount'))
-
-
         
         if opt==False:
             assets = {}
@@ -77,10 +95,9 @@ def addport(request):
                 assetName = request.POST.get('assetName'+str(i))
                 amount = request.POST.get('assetAmount'+str(i))
                 if assetName!=None:
-                    assets[assetName] = float(amount)
+                    assets[assetName] = assets.get(assetName,0)+float(amount)
             for asset, amount in assets.items():
                 addAssetToPort(create_port,asset,amount)
-
 
 
         elif opt==True and letOptPick==False:
@@ -90,6 +107,8 @@ def addport(request):
                 if assetName!=None:
                     assets.append(ALL_ASSETS[assetName])
 
+            assets = list(set(assets))
+            
             po = portfolio_opt.PortfolioOptmizer(tickList=assets)
             po.getWeights()
             weights = po.wCleaned
@@ -114,6 +133,34 @@ def addport(request):
     return render(request, 'portfolio/addport.html',context={'assetList':ALL_ASSETS_REV.values()})
 
 
+
+def rebalance(request,portName):
+
+    assetObjectist = pModels.PortfolioAssets.objects.filter(port__uPortName=portName,sold=False)
+    totalAmount = 0
+    netWorth = 0
+    assetList = []
+
+    for asset in assetObjectist:
+        if asset.sold==False:
+            totalAmount += asset.usdSpent
+            netWorth += pModels.AssetPriceMovements.objects.filter(ticker=asset.asset).latest('date').adj_close * asset.assetQuantity
+            assetList.append(asset.asset.assetTicker)
+            _sellAsset(portName,asset.asset.assetName,False)
+    print("LIst",assetList)
+
+    po = portfolio_opt.PortfolioOptmizer(tickList=assetList)
+    po.getWeights()
+    weights = po.wCleaned
+    print(weights)
+    portObj = pModels.Portfolio.objects.get(uPortName=portName)
+
+    for asset,weight in weights.items():
+        addAssetToPort(portObj,ALL_ASSETS_REV[asset],weight*netWorth)
+
+
+
+    return HttpResponseRedirect(reverse('portfolio:portdetails',args=[portName]))  
 
 def portdetails(request,portName):
     portObj = pModels.Portfolio.objects.get(uPortName=portName)
@@ -163,6 +210,5 @@ def portdetails(request,portName):
         'indLine':indLinePlot,
         'frontier':frontier,
         'frontierArea':frontierArea,
-        # 'dendrogram':dendrogram,
-        # 'cluster':cluster,
+        'portObj':portObj,
     })

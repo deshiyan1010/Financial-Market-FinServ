@@ -32,11 +32,15 @@
 {% block body_block %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
+
   <div class="container-scroller" style="padding-right: 75px;padding-left: 75px;">
     <h1 style="padding-left: 30px;padding-top: 150px;">{{portName}}</h1>
+    <br>
+    <a class='btn btn-info btn-lg' href="{% url 'portfolio:rebalance' portObj.uPortName %}"><i class="icon-refresh"></i>  Rebalance</a>
+    <br><br>
     <div class="">
       <div class="row">
-        <div class="col-lg-12 grid-margin stretch-card">
+        <div class="col-lg-7 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h2 class="card-title">Net Worth Chart</h2>
@@ -44,6 +48,44 @@
             </div>
           </div>
         </div>
+
+        <div class="col-lg-5 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Asset List</h2>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Asset</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Bought For</th>
+                    {% if portObj.sold %}
+                      <th scope="col">Sold For</th>
+                    {% else %}
+                      <th scope="col">Current Worth</th>
+                    {% endif %}
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for asset,info in allAssets.items %}
+                    {% if not asset.sold %}
+                    <tr>
+                      <th scope="row">{{asset.asset.assetName}}</th>
+                      <td>{{info.quantity_quote | floatformat:5}}</td>
+                      <td>{{info.quantity_usd | floatformat:2}}</td>
+                      <td>{{info.currentWorth | floatformat:2}}</td>
+                      <td><a class='btn btn-danger' href="{% url 'portfolio:sellAsset' portObj.uPortName asset.asset.assetName %}">Sell</a></td>
+                      
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
 
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
@@ -61,7 +103,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-12 grid-margin stretch-card">
+        <div class="col-lg-8 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Individual Asset Performance</h4>
@@ -69,7 +111,42 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-12 stretch-card">
+
+
+
+        <div class="col-lg-4 d-flex flex-column">
+          <div class="row flex-grow">
+            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+              <div class="card bg-primary card-rounded">
+                <div class="card-body pb-0">
+                  <h4 class="card-title card-title-dash text-white mb-4">Cummulative Summary</h4>
+                  <div class="row">
+                    <div class="col-sm-8">
+                      <p class="status-summary-ight-white mb-1" style="color:rgb(175, 175, 175)">Realized Profit/Loss</p>
+                      <h2 class="text-info">{{portObj.realized_profit | floatformat:3}}</h2>
+                    </div>
+
+                    <div class="col-sm-8">
+                      <div class="status-summary-chart-wrapper pb-4">
+                        <canvas id="status-summary"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="col-lg-8 stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Frontier Plot</h4>
@@ -86,7 +163,8 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-12 stretch-card">
+        
+        <div class="col-lg-8 stretch-card" style=" padding-top: 25px;">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Frontier Area Plot</h4>
@@ -117,6 +195,29 @@
   <script src="/static/dashboard/js/template.js"></script>
   <script src="/static/dashboard/js/settings.js"></script>
   <script src="/static/dashboard/js/todolist.js"></script>
+
+
+  <!-- plugins:js -->
+<script src="/static/dashboard/vendors/js/vendor.bundle.base.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="/static/dashboard/vendors/chart.js/Chart.min.js"></script>
+<script src="/static/dashboard/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="/static/dashboard/vendors/progressbar.js/progressbar.min.js"></script>
+
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="/static/dashboard/js/off-canvas.js"></script>
+<script src="/static/dashboard/js/hoverable-collapse.js"></script>
+<script src="/static/dashboard/js/template.js"></script>
+<script src="/static/dashboard/js/settings.js"></script>
+<script src="/static/dashboard/js/todolist.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="/static/dashboard/js/dashboard.js"></script>
+<script src="/static/dashboard/js/Chart.roundedBarCharts.js"></script>
+<!-- End custom js for this page-->
+
 
   <script>
 

@@ -2,7 +2,7 @@ from django.db import models
 
 from django.contrib.auth.models import User
 from django.db.models.base import ModelState
-
+import datetime
 from django.utils.timezone import now
 
 class Portfolio(models.Model):
@@ -12,9 +12,10 @@ class Portfolio(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     sold = models.BooleanField(default=False)
     sold_on = models.DateTimeField(null=True)
-
+    realized_profit = models.FloatField(default=0)
+    
     # def save(self):
-    #     self.uPortName = self.user.username + self.uPortName
+    #     self.created_on = datetime.datetime.now()
     #     super(Portfolio, self).save()
 
     def __str__(self):
@@ -52,7 +53,11 @@ class PortfolioAssets(models.Model):
     bought_on = models.DateTimeField(auto_now_add=True)
     sold_on = models.DateTimeField(null=True)
     sold_for_usd = models.FloatField(null=True)
+    
+    # def save(self):
+    #     self.bought_on = datetime.datetime.now()
+    #     super(PortfolioAssets, self).save()
 
     def __str__(self):
-        return self.port.user.username+"-"+self.port.uPortName+"-"+self.asset.assetName+" "+self.bought_on.strftime('%Y-%m-%d')
+        return self.port.user.username+"-"+self.port.uPortName+"-"+self.asset.assetName+" "+self.bought_on.strftime('%Y-%m-%d')+" "+str(self.sold)
 

@@ -43,14 +43,15 @@ def getNetWorthGainUnrealized(userObj):
     total_asset_dict = {}
 
     for assetO in assets_obj:
-        total_usd_spent += assetO.usdSpent
-        det = total_asset_dict.get(assetO,None)
-        if det==None:
-            total_asset_dict[assetO] = {'quantity_quote':0,
-                                        'quantity_usd':0}
-        
-        total_asset_dict[assetO]['quantity_quote'] += assetO.assetQuantity
-        total_asset_dict[assetO]['quantity_usd'] += assetO.usdSpent
+        if assetO.sold==False:
+            total_usd_spent += assetO.usdSpent
+            det = total_asset_dict.get(assetO,None)
+            if det==None:
+                total_asset_dict[assetO] = {'quantity_quote':0,
+                                            'quantity_usd':0}
+            
+            total_asset_dict[assetO]['quantity_quote'] += assetO.assetQuantity
+            total_asset_dict[assetO]['quantity_usd'] += assetO.usdSpent
     
     gains_dict = {}
     totalCurrWorth = 0
@@ -108,17 +109,18 @@ def getLinePlot(assetName: str):
 
 
 def calcPortfolioGain(portObj):
-    assets_obj = pModels.PortfolioAssets.objects.filter(port=portObj)
+    assets_obj = pModels.PortfolioAssets.objects.filter(port=portObj,sold=False)
     total_usd_spent = 0
     total_asset_dict = {}
 
     for assetO in assets_obj:
-        if assetO.sold!=None:
+        if assetO.sold==False:
             total_usd_spent += assetO.usdSpent
             det = total_asset_dict.get(assetO,None)
             if det==None:
                 total_asset_dict[assetO] = {'quantity_quote':0,
                                             'quantity_usd':0,
+                                            'currentWorth':0,
                                             }
             
             total_asset_dict[assetO]['quantity_quote'] += assetO.assetQuantity
@@ -132,17 +134,18 @@ def calcPortfolioGain(portObj):
         avg_bought_price = details['quantity_usd']/details['quantity_quote']
 
 
-        if portObj.sold==False:
+        if assetO.sold==False:
             current_price = pModels.AssetPriceMovements.objects.filter(ticker=assetO.asset).latest('date').adj_close
-        
+            total_asset_dict[assetO]['currentWorth'] = current_price*total_asset_dict[assetO]['quantity_quote']
         else:
             current_price = assetO.sold_for_usd/details['quantity_quote']
+            total_asset_dict[assetO]['currentWorth'] = assetO.sold_for_usd
 
 
         perGain = (current_price/avg_bought_price)-1
         
         profit = details['quantity_usd']*perGain
-        currentAssetWorth = details['quantity_usd']+profit
+        currentAssetWorth = details['quantity_usd']+profit 
 
         totalCurrWorth += currentAssetWorth
         totalCurrProfit += profit
@@ -164,7 +167,7 @@ def getPortList(userObj):
             'total_asset_dict':total_asset_dict,
             'gainDict':gains_dict,
             'totalCurrWorth':totalCurrWorth,
-            'totalCurrProfit':totalCurrProfit
+            'totalCurrProfit':totalCurrProfit + port.realized_profit
         }
     return portDetails
 
@@ -174,7 +177,7 @@ def getPortList(userObj):
 
 from django.contrib.auth.models import User
 def gainChartUnrealizedProfitPortfolio(portObj):
-    port_assets_list = pModels.PortfolioAssets.objects.filter(port=portObj)
+    port_assets_list = pModels.PortfolioAssets.objects.filter(port=portObj,sold=False)
     bought_on = portObj.created_on
 
     today = datetime.now() if portObj.sold==False else portObj.sold_on
