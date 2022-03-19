@@ -5,7 +5,6 @@ from django.views.decorators import csrf
 from riskfolio.Portfolio import Portfolio
 from scipy import cluster
 from scipy.cluster.hierarchy import dendrogram
-from yfinance import ticker
 from portfolio import models as pModels
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -19,18 +18,21 @@ from modules import portfolio_opt
 
 from pprint import pprint
 
-import plotly
 
 
-@login_required
-def sellPortfolio(request,port_id):
+def sellPortfolio(request,portName):
 
-    assetObjectist = pModels.PortfolioAssets.objects.filter(port_id=port_id,sold=False)
+    assetObjectist = pModels.PortfolioAssets.objects.filter(port_id=portName,sold=False)
+    
+    portObj = pModels.Portfolio.objects.get(uPortName=portName)
+    portObj.sold = True
+    portObj.sold_on = timezone.now()
+    portObj.save()
 
     for asset in assetObjectist:
         asset.sold = True
         asset.sold_on = timezone.now()
-        asset.sold_for_usd = pModels.AssetPriceMovements.objects.filter(ticker=asset.asset).latest('date')
+        asset.sold_for_usd = pModels.AssetPriceMovements.objects.filter(ticker=asset.asset).latest('date').adj_close * asset.assetQuantity
         asset.save()
 
 
@@ -57,10 +59,8 @@ def addport(request):
 
         opt = True if 'opt' in request.POST else False
         letOptPick = True if 'ap' in request.POST else False
-        print(letOptPick,opt)
 
         portName = request.POST.get('portName')
-        print(portName)
         create_port = pModels.Portfolio.objects.create(user=request.user,uPortName=portName)
         create_port.save()
 
@@ -78,7 +78,6 @@ def addport(request):
                 amount = request.POST.get('assetAmount'+str(i))
                 if assetName!=None:
                     assets[assetName] = float(amount)
-            print(assets)
             for asset, amount in assets.items():
                 addAssetToPort(create_port,asset,amount)
 
@@ -107,7 +106,6 @@ def addport(request):
             weights = po.wCleaned
 
             for asset,weight in weights.items():
-                print(asset,weight)
                 addAssetToPort(create_port,ALL_ASSETS_REV[asset],weight*grandAmount)
 
 
@@ -152,7 +150,6 @@ def portdetails(request,portName):
     # cluster = port_opt_obj.clusterPlot()
     # dendrogram = port_opt_obj.dendrogramPlot()
     
-
 
     return render(request, 'portfolio/portdetails.html',context={
         'cum_line':cum_line_dict,

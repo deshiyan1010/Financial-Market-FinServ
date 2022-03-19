@@ -108,7 +108,7 @@ def getLinePlot(assetName: str):
 
 
 def calcPortfolioGain(portObj):
-    assets_obj = pModels.PortfolioAssets.objects.filter(port=portObj,sold=False)
+    assets_obj = pModels.PortfolioAssets.objects.filter(port=portObj)
     total_usd_spent = 0
     total_asset_dict = {}
 
@@ -130,7 +130,15 @@ def calcPortfolioGain(portObj):
     totalCurrProfit = 0
     for assetO,details in total_asset_dict.items():
         avg_bought_price = details['quantity_usd']/details['quantity_quote']
-        current_price = pModels.AssetPriceMovements.objects.filter(ticker=assetO.asset).latest('date').adj_close
+
+
+        if portObj.sold==False:
+            current_price = pModels.AssetPriceMovements.objects.filter(ticker=assetO.asset).latest('date').adj_close
+        
+        else:
+            current_price = assetO.sold_for_usd/details['quantity_quote']
+
+
         perGain = (current_price/avg_bought_price)-1
         
         profit = details['quantity_usd']*perGain
@@ -166,10 +174,10 @@ def getPortList(userObj):
 
 from django.contrib.auth.models import User
 def gainChartUnrealizedProfitPortfolio(portObj):
-    port_assets_list = pModels.PortfolioAssets.objects.filter(port=portObj,sold=False)
+    port_assets_list = pModels.PortfolioAssets.objects.filter(port=portObj)
     bought_on = portObj.created_on
 
-    today = datetime.now()
+    today = datetime.now() if portObj.sold==False else portObj.sold_on
     cday = bought_on
 
     cday = cday.replace(hour=0,minute=0,second=0)
@@ -325,14 +333,22 @@ def getDateWiseLinePlot(portObj):
     
     for i in range(len(dayPnL)-1,0,-1):
         dayPnL[i] = dayPnL[i] - dayPnL[i-1]
+    
+    date = [d.strftime("%Y/%m/%d") for d in list(portGainsDict.keys())]
+    try:
+        if netWorth[0]==0:
+            netWorth[0] = netWorth[1]
+        else:
+            print("dcasDvcDS",netWorth[0])
+    except Exception as e:
+        print(e)
+        pass
 
     line_dict = {
-            'date': [d.strftime("%Y/%m/%d") for d in list(portGainsDict.keys())],
+            'date': date,
             'netWorth':netWorth,
             'dayPnL':dayPnL,
     }
-
-
     return line_dict
 
 

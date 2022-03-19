@@ -53,7 +53,7 @@ class PortfolioOptmizer:
 
         elif filename==None and tickList!=None:
             print("Fetching from online.")
-            self.df = self.getFromNet(tickList)
+            self.df = self.getFromDB(tickList)
 
         elif filename!=None and tickList==None:
             self.df = self.getFromFile(filename)
@@ -82,6 +82,16 @@ class PortfolioOptmizer:
             df = df.astype({col:'int32'})
         return df
     
+    def getFromDB(self,tickList,previous_x_days=180):
+        from portfolio.models import AssetPriceMovements
+        df = pd.DataFrame()
+        print(tickList)
+        for ticker in tickList:
+            priceList = []
+            for obj in AssetPriceMovements.objects.filter(ticker__assetTicker=ticker).order_by('date'):
+                priceList.append(obj.adj_close)
+            df[ticker] = priceList
+        return df   
 
 
 

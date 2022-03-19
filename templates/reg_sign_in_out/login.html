@@ -34,6 +34,7 @@
               </div>
               <h4>Hello! let's get started</h4>
               <h6 class="fw-light">Sign in to continue.</h6>
+              {% csrf_token %}
               <form class="pt-3" action="{% url 'reg_sign_in_out:user_login'%}" method="post">
               {% csrf_token %}
                 <div class="form-group">
@@ -46,21 +47,23 @@
                 <div class="my-2 d-flex justify-content-between align-items-center">
                   <div class="form-check">
                     <label class="form-check-label text-muted">
-                      <input type="checkbox" class="form-check-input">
+                      {% csrf_token %}
+                      <input type="checkbox" class="form-check-input" name="rememberme" id="rememberme">
                       Keep me signed in
                     </label>
                   </div>
                   <a href="{% url 'reset_password' %}" type='submit' class="auth-link text-black">Forgot password?</a>
                 </div>
-                <div class="mb-2">
-                  <button type="button" class="btn btn-block btn-facebook auth-form-btn">
-                    <i class="ti-facebook me-2"></i>Connect using facebook
-                  </button>
-                </div>
-                <div class="text-center mt-4 fw-light">
-                  Don't have an account? <a href="{% url 'reg_sign_in_out:registration' %}" class="text-primary">Create</a>
-                </div>
+                
               </form>
+              <br>
+              {% if tried%}
+                <h4>Ohhh! guess you typed the wrong password, try again.</h4>
+              {% endif %}
+              <br>
+              <div class="text-center mt-4 fw-light">
+                Don't have an account? <a href="{% url 'reg_sign_in_out:registration' %}" class="text-primary">Create</a>
+              </div>
             </div>
           </div>
         </div>

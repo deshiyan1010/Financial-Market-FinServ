@@ -66,6 +66,7 @@ class Startup():
         if self.lastUpdated!=self.today:
             self.syncData()
 
+        
     def syncData(self):
 
         try:

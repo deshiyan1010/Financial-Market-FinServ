@@ -4,8 +4,10 @@ from modules.helper import getNews,getTickerData,getPortList,getIndPortLineChart
     
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-
+import finnhub
 from pprint import pprint
+
+from finserv.startup import ALL_ASSETS
 
 def dash(request):
 
@@ -34,8 +36,20 @@ def dash(request):
     
     overall = overallStats(request.user)
     
+    finnhub_client = finnhub.Client(api_key="c8qa5e2ad3ienapjhe80")
 
+    score = []
 
+    for asset,sym in list(ALL_ASSETS.items())[:2]:
+        try:
+            scoreval = int(finnhub_client.stock_social_sentiment(sym)['twitter'][0]['score']*100)/100
+            score.append([scoreval,asset])
+        except Exception as e:
+            print(e)
+            pass
+
+    score = sorted(score,key=lambda x:x[0],reverse=True)[:10]
+    score = {y:x for x,y in score}
     return render(request, 'dashboard/dashnewft.html',context=
                     {
                         'topAssets':topAssets,
@@ -45,6 +59,7 @@ def dash(request):
                         'indPortLine':cleaned,
                         'dateArr':datearr,
                         'pie':pie_dict,
+                        'pred':score
                         }
                 )
 

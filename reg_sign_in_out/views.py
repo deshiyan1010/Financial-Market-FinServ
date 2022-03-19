@@ -73,6 +73,11 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        if request.POST.get('rememberme'):
+            print("Remembering")
+            request.session.set_expiry(1209600)
+        else:
+            print("Not rem")
         user = authenticate(username=username,password=password)
         if user:
             if user.is_active:
@@ -81,7 +86,7 @@ def user_login(request):
 
         else:
 
-            return render(request,"reg_sign_in_out/login.html",{'tried':'True'})
+            return render(request,"reg_sign_in_out/login.html",{'tried':1})
 
     else:
         return render(request,"reg_sign_in_out/login.html")

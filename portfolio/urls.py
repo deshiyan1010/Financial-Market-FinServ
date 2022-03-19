@@ -9,6 +9,7 @@ app_name = "portfolio"
 urlpatterns = [
                 path('addport/',views.addport,name='addport'),
                 path('portDetails/<str:portName>/',views.portdetails,name='portdetails'),
+                path('sellPortfolio/<str:portName>/',views.sellPortfolio,name='sellPortfolio'),
             ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()

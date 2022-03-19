@@ -11,7 +11,7 @@ class Portfolio(models.Model):
     # uPortName2 = models.CharField(max_length=64)
     created_on = models.DateTimeField(auto_now_add=True)
     sold = models.BooleanField(default=False)
-
+    sold_on = models.DateTimeField(null=True)
 
     # def save(self):
     #     self.uPortName = self.user.username + self.uPortName
@@ -37,6 +37,9 @@ class AssetPriceMovements(models.Model):
 
     class Meta:
         unique_together = ('ticker', 'date',)
+
+
+
 
 
 
