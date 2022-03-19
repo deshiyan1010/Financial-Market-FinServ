@@ -59,11 +59,7 @@
                     <th scope="col">Asset</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Bought For</th>
-                    {% if portObj.sold %}
-                      <th scope="col">Sold For</th>
-                    {% else %}
-                      <th scope="col">Current Worth</th>
-                    {% endif %}
+                    <th scope="col">Current Worth</th>
                     <th scope="col">Status</th>
                   </tr>
                 </thead>
@@ -113,7 +109,6 @@
         </div>
 
 
-
         <div class="col-lg-4 d-flex flex-column">
           <div class="row flex-grow">
             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
@@ -146,7 +141,7 @@
 
 
 
-        <div class="col-lg-8 stretch-card">
+        <div class="col-lg-7 stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Frontier Plot</h4>
@@ -164,6 +159,40 @@
           </div>
         </div>
         
+        <div class="col-lg-5 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Sold Asset</h2>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Asset</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Bought For</th>
+                    <th scope="col">Sold For</th>
+                    <th scope="col">Sold on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for asset,info in allAssets.items %}
+                    {% if asset.sold %}
+                    <tr>
+                      <th scope="row">{{asset.asset.assetName}}</th>
+                      <td>{{info.quantity_quote | floatformat:5}}</td>
+                      <td>{{info.quantity_usd | floatformat:2}}</td>
+                      <td>{{info.currentWorth | floatformat:2}}</td>
+                      <td>{{asset.sold_on}}</td>
+                      
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
         <div class="col-lg-8 stretch-card" style=" padding-top: 25px;">
           <div class="card">
             <div class="card-body">

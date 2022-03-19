@@ -109,27 +109,28 @@ def getLinePlot(assetName: str):
 
 
 def calcPortfolioGain(portObj):
-    assets_obj = pModels.PortfolioAssets.objects.filter(port=portObj,sold=False)
+    assets_obj = pModels.PortfolioAssets.objects.filter(port=portObj)
     total_usd_spent = 0
     total_asset_dict = {}
 
     for assetO in assets_obj:
-        if assetO.sold==False:
-            total_usd_spent += assetO.usdSpent
-            det = total_asset_dict.get(assetO,None)
-            if det==None:
-                total_asset_dict[assetO] = {'quantity_quote':0,
-                                            'quantity_usd':0,
-                                            'currentWorth':0,
-                                            }
-            
-            total_asset_dict[assetO]['quantity_quote'] += assetO.assetQuantity
-            total_asset_dict[assetO]['quantity_usd'] += assetO.usdSpent
+        # if assetO.sold==False:
+        total_usd_spent += assetO.usdSpent
+        det = total_asset_dict.get(assetO,None)
+        if det==None:
+            total_asset_dict[assetO] = {'quantity_quote':0,
+                                        'quantity_usd':0,
+                                        'currentWorth':0,
+                                        }
+        
+        total_asset_dict[assetO]['quantity_quote'] += assetO.assetQuantity
+        total_asset_dict[assetO]['quantity_usd'] += assetO.usdSpent
 
 
     gains_dict = {}
     totalCurrWorth = 0
     totalCurrProfit = 0
+    print(total_asset_dict)
     for assetO,details in total_asset_dict.items():
         avg_bought_price = details['quantity_usd']/details['quantity_quote']
 
