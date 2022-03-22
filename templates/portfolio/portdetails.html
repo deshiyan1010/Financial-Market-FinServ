@@ -180,7 +180,7 @@
                       <th scope="row">{{asset.asset.assetName}}</th>
                       <td>{{info.quantity_quote | floatformat:5}}</td>
                       <td>{{info.quantity_usd | floatformat:2}}</td>
-                      <td>{{info.currentWorth | floatformat:2}}</td>
+                      <td>{{asset.sold_for_usd | floatformat:2}}</td>
                       <td>{{asset.sold_on}}</td>
                       
                     </tr>
@@ -210,6 +210,36 @@
             </div>
           </div>
         </div>
+
+
+
+        <div class="col-lg-4 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Add Asset</h2>
+              <br>
+                
+
+                <form class="pt-3" action="{% url 'portfolio:portdetails' portObj.uPortName%}" method="post">
+                  <h5>Asset Name</h5>
+                  <select type="text" class="form-control mb-2 mr-sm-2" id='assetName' name='assetName'>
+                    {% for asset in assetList %}
+                        <option value={{asset}}>{{asset}}</option>
+                    {% endfor %}
+                  </select>
+                  <br>
+                  <h5>Amount</h5>
+                  <input type="text" class="form-control" id='amount' name='amount'placeholder="Amount">
+                  <br>
+                  <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" type="submit">Add</button>
+
+                </form>
+            </div>
+          </div>
+        </div>
+
+
+
       </div>
     </div>
   </div>

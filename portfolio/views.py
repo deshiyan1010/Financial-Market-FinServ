@@ -134,6 +134,13 @@ def addport(request):
 
 
 
+
+
+
+
+
+
+
 def rebalance(request,portName):
 
     assetObjectist = pModels.PortfolioAssets.objects.filter(port__uPortName=portName,sold=False)
@@ -162,8 +169,22 @@ def rebalance(request,portName):
 
     return HttpResponseRedirect(reverse('portfolio:portdetails',args=[portName]))  
 
+
+@csrf_exempt
 def portdetails(request,portName):
+    
     portObj = pModels.Portfolio.objects.get(uPortName=portName)
+
+    if request.user.is_authenticated==False:
+        return HttpResponseRedirect(reverse('reg_sign_in_out:user_login'))  
+
+    if request.method == "POST":
+        assetName = request.POST.get('assetName')
+        amount = float(request.POST.get('amount'))
+        addAssetToPort(portObj,assetName,amount)
+        return HttpResponseRedirect(reverse('portfolio:portdetails',args=[portName]))  
+
+    
     assetList = pModels.PortfolioAssets.objects.filter(port=portObj)
     indLinePlot = {}
 
@@ -211,4 +232,5 @@ def portdetails(request,portName):
         'frontier':frontier,
         'frontierArea':frontierArea,
         'portObj':portObj,
+        'assetList':ALL_ASSETS_REV.values(),
     })

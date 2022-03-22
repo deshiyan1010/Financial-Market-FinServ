@@ -130,7 +130,7 @@ def calcPortfolioGain(portObj):
     gains_dict = {}
     totalCurrWorth = 0
     totalCurrProfit = 0
-    print(total_asset_dict)
+
     for assetO,details in total_asset_dict.items():
         avg_bought_price = details['quantity_usd']/details['quantity_quote']
 
@@ -139,6 +139,7 @@ def calcPortfolioGain(portObj):
             current_price = pModels.AssetPriceMovements.objects.filter(ticker=assetO.asset).latest('date').adj_close
             total_asset_dict[assetO]['currentWorth'] = current_price*total_asset_dict[assetO]['quantity_quote']
         else:
+            continue
             current_price = assetO.sold_for_usd/details['quantity_quote']
             total_asset_dict[assetO]['currentWorth'] = assetO.sold_for_usd
 

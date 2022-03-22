@@ -273,7 +273,7 @@
                                       {% if key.sold %}
                                         <h6>Sold on: {{key.sold_on}}</h6>
                                       {% else %}
-                                        <h6><a class='btn btn-danger' href="{% url 'portfolio:sellPortfolio' key.uPortName %}">Sell</a></h6>
+                                        <h6><a class='btn btn-danger' style="color:white;" href="{% url 'portfolio:sellPortfolio' key.uPortName %}">Sell</a></h6>
                                       {% endif %}
                                     </td>
 
