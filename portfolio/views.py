@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from finserv.startup import ALL_ASSETS,ALL_ASSETS_REV
+from finserv.startup import ALL_ASSETS,ALL_ASSETS_REV, VALUE
 
 from modules.helper import getLinePlot,calcPortfolioGain,gainChartUnrealizedProfitPortfolio,getPortPie,getDateWiseLinePlot
 from modules import portfolio_opt
@@ -66,6 +66,7 @@ def _sellAsset(portName,assetName,realized):
 
 
 def addAssetToPort(portObj,assetName,USD):
+    print("Adding",assetName)
     assetObj = pModels.Assets.objects.get(assetName=assetName)
     cPrice = pModels.AssetPriceMovements.objects.filter(ticker=assetObj).latest('date').adj_close
     amtAssetOwned = USD/cPrice
@@ -93,8 +94,10 @@ def addport(request):
             assets = {}
             for i in range(100):
                 assetName = request.POST.get('assetName'+str(i))
+                
                 amount = request.POST.get('assetAmount'+str(i))
                 if assetName!=None:
+                    assetName = " ".join(assetName.split("_"))
                     assets[assetName] = assets.get(assetName,0)+float(amount)
             for asset, amount in assets.items():
                 addAssetToPort(create_port,asset,amount)
@@ -104,7 +107,9 @@ def addport(request):
             assets = []
             for i in range(100):
                 assetName = request.POST.get('assetName'+str(i))
+                
                 if assetName!=None:
+                    assetName = " ".join(assetName.split("_"))
                     assets.append(ALL_ASSETS[assetName])
 
             assets = list(set(assets))
@@ -130,7 +135,7 @@ def addport(request):
 
         return HttpResponseRedirect(reverse('dashboard:dash'))
 
-    return render(request, 'portfolio/addport.html',context={'assetList':ALL_ASSETS_REV.values()})
+    return render(request, 'portfolio/addport.html',context={'assetList':VALUE})
 
 
 
@@ -179,7 +184,8 @@ def portdetails(request,portName):
         return HttpResponseRedirect(reverse('reg_sign_in_out:user_login'))  
 
     if request.method == "POST":
-        assetName = request.POST.get('assetName')
+        assetName = " ".join(request.POST.get('assetName').split("_"))
+        print(assetName)
         amount = float(request.POST.get('amount'))
         addAssetToPort(portObj,assetName,amount)
         return HttpResponseRedirect(reverse('portfolio:portdetails',args=[portName]))  
@@ -232,5 +238,5 @@ def portdetails(request,portName):
         'frontier':frontier,
         'frontierArea':frontierArea,
         'portObj':portObj,
-        'assetList':ALL_ASSETS_REV.values(),
+        'assetList':VALUE,
     })

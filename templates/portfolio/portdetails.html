@@ -223,8 +223,8 @@
                 <form class="pt-3" action="{% url 'portfolio:portdetails' portObj.uPortName%}" method="post">
                   <h5>Asset Name</h5>
                   <select type="text" class="form-control mb-2 mr-sm-2" id='assetName' name='assetName'>
-                    {% for asset in assetList %}
-                        <option value={{asset}}>{{asset}}</option>
+                    {% for assetval,asset in assetList.items %}
+                        <option value={{assetval}}>{{asset}}</option>
                     {% endfor %}
                   </select>
                   <br>

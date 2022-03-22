@@ -51,6 +51,8 @@ ALL_ASSETS = {
 
 ALL_ASSETS_REV = {y:x for x,y in ALL_ASSETS.items()}
 
+VALUE = {"_".join(x.split(" ")):x for x in  ALL_ASSETS.keys()}
+
 class Startup():
     
     def __init__(self) -> None:

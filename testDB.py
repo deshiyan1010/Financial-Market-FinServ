@@ -52,16 +52,17 @@ import yfinance as yf
 
 import random
 
-port = pModels.Portfolio.objects.all()
+port = pModels.Assets.objects.get(assetName="Johnson and Johnson")
+print(port.assetName)
 # asset = pModels.Assets.objects.all()
 # for i in range(5):
 #     p = pModels.PortfolioAssets.objects.create(port=port,asset=asset[random.randint(0,31)],usdSpent=1000,assetQuantity=10)
 #     p.save()
 
-for p in port:
-    if len(p.uPortName)==0:
-        p.delete()
-print(port.id)
+# for p in port:
+#     if len(p.uPortName)==0:
+#         p.delete()
+# print(port.id)
 
 # ALL_ASSETS = {
 #     'Apple':'AAPL',
